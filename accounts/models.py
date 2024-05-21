@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
-
+from utils.models import TimeStamp, UUID
 
 class UserManager(BaseUserManager):
     def create_user(self, email=None, phone_number=None, password=None):
@@ -39,7 +39,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f"{self.email} - {self.phone_number}"
 
-class Profile(models.Model):
+class Profile(TimeStamp, UUID):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)

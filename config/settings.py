@@ -31,7 +31,8 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(",")
 
 # Application definition
 LOCAL_APPS = [
-    'accounts.apps.AccountsConfig'
+    'accounts.apps.AccountsConfig', 
+    'utils.apps.UtilsConfig',  
 ]
 THIRD_PARTY_APPS  = [
     'rest_framework',
@@ -43,8 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    *LOCAL_APPS,
-    *THIRD_PARTY_APPS,
+    *LOCAL_APPS, 
+    *THIRD_PARTY_APPS, 
 ]
 
 MIDDLEWARE = [
