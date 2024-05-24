@@ -5,8 +5,8 @@ from utils.models import TimeStamp, UUID
 
 class UserManager(BaseUserManager):
     def create_user(self, email=None, phone_number=None, password=None):
-        if not phone_number:
-            raise ValueError('User must enter phone number')
+        if not phone_number and not email:
+            raise ValueError('User must enter phone number or email')
 
         user = self.model(email=email, phone_number=phone_number,)
 
