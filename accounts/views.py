@@ -26,7 +26,7 @@ class RegisterVerify(CreateModelMixin, GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(serializer.data, status=HTTP_201_CREATED)
+            return Response("The user was registered successfully.", status=HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
@@ -38,7 +38,18 @@ class LoginVerify(CreateModelMixin, GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(serializer.data, status=HTTP_201_CREATED)
+            return Response("The user was logged successfully.", status=HTTP_200_OK)
         else:
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
+class ForgetPasswordVerify(CreateModelMixin, GenericViewSet):
+    permission_classes = [AllowAny]
+    serializer_class = serializers.ForgetPasswordSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response("The password was changed successfully.", status=HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
