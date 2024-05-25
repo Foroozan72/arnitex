@@ -187,3 +187,20 @@ class ForgetPasswordSerializer(serializers.Serializer):
         self.validated_data["access"] = get_tokens_for_user(user)['access']
         self.validated_data["refresh"] = get_tokens_for_user(user)['refresh']
         return self.validated_data
+    
+class ChangePasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(max_length=20)
+    new_password = serializers.CharField(max_length=20)
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+        if not user.check_password(attrs['password']):
+            raise serializers.ValidationError("The password is wrong.")
+        return attrs 
+    
+    def save(self, **kwargs):
+        user = self.context['request'].user
+        user.set_password(self.validated_data['new_password'])
+        user.save()
+        
+        return self.validated_data

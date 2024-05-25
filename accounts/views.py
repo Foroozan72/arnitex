@@ -76,6 +76,17 @@ class ForgetPasswordVerify(CreateModelMixin, GenericViewSet):
         else:
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
+class ChangePassword(CreateModelMixin, GenericViewSet):
+    serializer_class = serializers.ChangePasswordSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response("The password was changed successfully.", status=HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
 class LogoutViewSet(CreateModelMixin, GenericViewSet):
     def create(self, request, *args, **kwargs):
         refresh_token = request.data.get('refresh_token')
