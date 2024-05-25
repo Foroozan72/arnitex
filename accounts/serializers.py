@@ -4,6 +4,12 @@ from .utils_otp import SendOtp, get_user_otp
 from .utils_jwt import get_tokens_for_user
 User = get_user_model()
 
+class CheckEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+class CheckPhoneNumberSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(max_length=11)
+
 class SendOTPSerializer(serializers.Serializer):
     email = serializers.EmailField(required=False)
     phone_number = serializers.CharField(max_length=11, required=False)
@@ -202,5 +208,5 @@ class ChangePasswordSerializer(serializers.Serializer):
         user = self.context['request'].user
         user.set_password(self.validated_data['new_password'])
         user.save()
-        
+
         return self.validated_data

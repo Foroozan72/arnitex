@@ -28,6 +28,31 @@ class DevLogin(CreateModelMixin, GenericViewSet):
         }
         return response
 
+class CheckEmail(CreateModelMixin, GenericViewSet):
+    permission_classes = [AllowAny]
+    serializer_class = serializers.CheckEmailSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data['email']
+        exists = User.objects.filter(email=email).exists()
+        return Response({"exists": exists}, status=HTTP_200_OK)
+
+class CheckPhoneNumber(CreateModelMixin, GenericViewSet):
+    permission_classes = [AllowAny]
+    serializer_class = serializers.CheckPhoneNumberSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        phone_number = serializer.validated_data['phone_number']
+        exists = User.objects.filter(phone_number=phone_number).exists()
+        return Response({"exists": exists}, status=HTTP_200_OK)
+
+
 class SendOTP(CreateModelMixin, GenericViewSet):
     permission_classes = [AllowAny]
     serializer_class = serializers.SendOTPSerializer
