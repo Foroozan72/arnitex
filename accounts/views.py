@@ -4,8 +4,29 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_204_NO_CONTENT
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import get_user_model
 
+from .utils_jwt import get_tokens_for_user
 from . import serializers
+User = get_user_model()
+        
+class DevLogin(CreateModelMixin, GenericViewSet):
+    permission_classes = [AllowAny]
+    
+    def create(self, request):
+        response = Response()
+        user, created = User.objects.get_or_create(phone_number=request.POST.get('phone_number'), email=request.POST.get('email'), is_superuser=True)
+
+        access_token = get_tokens_for_user(user)['access']
+        refresh_token = get_tokens_for_user(user)['refresh']
+
+        response.set_cookie(key='refreshtoken',
+                            value=refresh_token, httponly=True)
+        response.data = {
+            'access_token': access_token,
+            'refresh': refresh_token,
+        }
+        return response
 
 class SendOTP(CreateModelMixin, GenericViewSet):
     permission_classes = [AllowAny]
