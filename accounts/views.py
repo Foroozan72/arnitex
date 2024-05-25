@@ -7,6 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 
 from .utils_jwt import get_tokens_for_user
+from .models import Profile
 from . import serializers
 User = get_user_model()
         
@@ -19,6 +20,8 @@ class DevLogin(CreateModelMixin, GenericViewSet):
 
         access_token = get_tokens_for_user(user)['access']
         refresh_token = get_tokens_for_user(user)['refresh']
+        if created:
+            Profile.objects.create(user=user)
 
         response.set_cookie(key='refreshtoken',
                             value=refresh_token, httponly=True)

@@ -12,6 +12,7 @@ class UserManager(BaseUserManager):
 
         user.set_password(password)
         user.save(using=self._db)
+        Profile.objects.create(user=user)
         return user
 
     def create_superuser(self, email=None, phone_number=None, password=None):
@@ -21,6 +22,7 @@ class UserManager(BaseUserManager):
         user.is_staff = True
         user.is_verified = True
         user.save(using=self._db)
+        Profile.objects.create(user=user)
         return user
 
 class User(AbstractBaseUser, PermissionsMixin):

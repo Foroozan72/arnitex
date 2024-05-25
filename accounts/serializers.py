@@ -74,7 +74,7 @@ class RegisterVerifySerializer(serializers.Serializer):
                 phone_number=self.validated_data.get('phone_number'))
             
         else:
-            user = User.objects.create_superuser(
+            user = User.objects.create_user(
                 email=self.validated_data.get('email'), 
                 password=self.validated_data.get('password'))
 
