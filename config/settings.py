@@ -28,7 +28,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 API_VERSION = os.getenv("API_VERSION", "v1")
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(",")
+# ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(",")
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
 
 # Application definition
 LOCAL_APPS = [
@@ -38,6 +39,7 @@ LOCAL_APPS = [
 THIRD_PARTY_APPS  = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
+    'drf_yasg',
 ]
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -85,10 +87,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('NAME_DB'),  
+        'USER': os.getenv('USER_DB'),  
+        'PASSWORD': os.getenv('PASSWORD_DB'),  
+        'HOST': os.getenv('ALLOWED_HOSTS'),  
+        'PORT': '5432', 
     }
 }
 
