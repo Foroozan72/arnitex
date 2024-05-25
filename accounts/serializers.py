@@ -4,7 +4,7 @@ from .utils_otp import SendOtp, get_user_otp
 from .utils_jwt import get_tokens_for_user
 User = get_user_model()
 
-class LoginRegisterSerializer(serializers.Serializer):
+class SendOTPSerializer(serializers.Serializer):
     email = serializers.EmailField(required=False)
     phone_number = serializers.CharField(max_length=11, required=False)
 

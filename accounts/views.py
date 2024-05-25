@@ -6,9 +6,9 @@ from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_RE
 
 from . import serializers
 
-class LoginRegisterViewSet(CreateModelMixin, GenericViewSet):
+class SendOTP(CreateModelMixin, GenericViewSet):
     permission_classes = [AllowAny]
-    serializer_class = serializers.LoginRegisterSerializer
+    serializer_class = serializers.SendOTPSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
