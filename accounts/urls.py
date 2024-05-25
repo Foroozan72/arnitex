@@ -7,6 +7,7 @@ router.register(r'send-otp', views.SendOTP, basename='send-otp')
 router.register(r'register-verify', views.RegisterVerify, basename='register-verify')
 router.register(r'login-verify', views.LoginVerify, basename='login-verify')
 router.register(r'forget-password-verify', views.ForgetPasswordVerify, basename='forget-password-verify')
+router.register(r'logout', views.LogoutViewSet, basename='logout')
 
 urlpatterns = [
     path('', include(router.urls)),
