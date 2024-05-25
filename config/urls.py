@@ -18,9 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from .v1.urls import urlpatterns
+from .v1.swagger_urls import urlpatterns as swagger_urlpatterns
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(f"api/{settings.API_VERSION}/", include(urlpatterns)),
+    path('', include(swagger_urlpatterns)),
 ]
+
+
