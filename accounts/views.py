@@ -1,10 +1,13 @@
-from rest_framework.permissions import AllowAny
-from rest_framework.mixins import CreateModelMixin
+from rest_framework.permissions import AllowAny , IsAuthenticated
+from rest_framework.mixins import CreateModelMixin , RetrieveModelMixin, UpdateModelMixin
 from rest_framework.viewsets import GenericViewSet
+from rest_framework import viewsets , status
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_204_NO_CONTENT
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
+
 
 from .utils_jwt import get_tokens_for_user
 from .models import Profile
@@ -128,3 +131,22 @@ class LogoutViewSet(CreateModelMixin, GenericViewSet):
                 return Response({'error': 'Invalid token'}, status=HTTP_400_BAD_REQUEST)
         else:
             return Response({'error': 'The refresh_token field is required'}, status=HTTP_400_BAD_REQUEST)
+        
+class ProfileViewSet(viewsets.GenericViewSet, RetrieveModelMixin, UpdateModelMixin):
+
+    queryset = Profile.objects.all()
+    serializer_class = serializers.ProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def retrieve(self, request, pk=None):
+        profile = get_object_or_404(self.queryset, pk=pk)
+        serializer = self.get_serializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def update(self, request, pk=None):
+        profile = get_object_or_404(self.queryset, pk=pk)
+        serializer = self.get_serializer(profile, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

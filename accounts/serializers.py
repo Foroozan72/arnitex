@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .utils_otp import SendOtp, get_user_otp
 from .utils_jwt import get_tokens_for_user
+from .models import Profile
 User = get_user_model()
 
 class CheckEmailSerializer(serializers.Serializer):
@@ -210,3 +211,8 @@ class ChangePasswordSerializer(serializers.Serializer):
         user.save()
 
         return self.validated_data
+    
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ['id', 'user', 'first_name', 'last_name', 'date_of_birth', 'address', 'city', 'state', 'country', 'postal_code', 'national_id']
