@@ -2,6 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
 
+app_name = 'accounts'
 router = DefaultRouter()
 router.register(r'dev-login', views.DevLogin, basename='dev-login')
 router.register(r'check-email', views.CheckEmail, basename='check-email')
