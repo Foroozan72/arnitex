@@ -217,6 +217,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['id', 'user', 'first_name', 'last_name', 'date_of_birth', 'address', 'city', 'state', 'country', 'postal_code', 'national_id']
+        read_only_fields = ['user']
 
     def retrieve(self, instance):
         return self.data

@@ -13,9 +13,7 @@ router.register(r'login-verify', views.LoginVerify, basename='login-verify')
 router.register(r'forget-password-verify', views.ForgetPasswordVerify, basename='forget-password-verify')
 router.register(r'change-password', views.ChangePassword, basename='change-password')
 router.register(r'logout', views.LogoutViewSet, basename='logout')
-router.register(r'profile', views.ProfileViewSet, basename='profile')
-
 urlpatterns = [
     path('', include(router.urls)),
-
+    path('profile/', views.UserProfileView.as_view(), name='profile')
 ]

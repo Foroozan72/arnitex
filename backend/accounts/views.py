@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_204_NO_CONTENT
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
-from rest_framework.generics import RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import ListAPIView, UpdateAPIView
 
 from .models import Profile
 from .serializers import ProfileSerializer
@@ -144,18 +144,17 @@ class LogoutViewSet(CreateModelMixin, GenericViewSet):
         else:
             return Response({'error': 'The refresh_token field is required'}, status=HTTP_400_BAD_REQUEST)
         
-class UserProfileView(RetrieveAPIView, UpdateAPIView):
-    queryset = Profile.objects.all()
+class UserProfileView(ListAPIView, UpdateAPIView):
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
+    def list(self, request, *args, **kwargs):
+        instance = self.request.user.profile
         serializer = self.get_serializer(instance)
         return Response(serializer.retrieve(instance), status=status.HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
-        instance = self.get_object()
+        instance = self.request.user.profile
         serializer = self.get_serializer(instance, data=request.data)
         if serializer.is_valid():
             serializer.update(instance, serializer.validated_data)
