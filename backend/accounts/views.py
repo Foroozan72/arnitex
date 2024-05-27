@@ -23,13 +23,21 @@ class DevLogin(CreateModelMixin, GenericViewSet):
     
     def create(self, request):
         response = Response()
-        user, created = User.objects.get_or_create(phone_number=request.POST.get('phone_number'), email=request.POST.get('email'), is_superuser=True)
+        if request.POST.get('phone_number'):
+            user, created = User.objects.get_or_create(phone_number=request.POST.get('phone_number'), is_superuser=True)
 
-        access_token = get_tokens_for_user(user)['access']
-        refresh_token = get_tokens_for_user(user)['refresh']
+        elif request.POST.get('email'):
+            user, created = User.objects.get_or_create(email=request.POST.get('email'), is_superuser=True)
+        
+        else:
+            return Response('phone_number or email field is required.')
+
         if created:
             Profile.objects.create(user=user)
 
+        access_token = get_tokens_for_user(user)['access']
+        refresh_token = get_tokens_for_user(user)['refresh']
+        
         response.set_cookie(key='refreshtoken',
                             value=refresh_token, httponly=True)
         response.data = {
