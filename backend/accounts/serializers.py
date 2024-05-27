@@ -5,6 +5,7 @@ from .utils_jwt import get_tokens_for_user
 from .models import Profile
 User = get_user_model()
 
+
 class CheckEmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
@@ -216,3 +217,22 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['id', 'user', 'first_name', 'last_name', 'date_of_birth', 'address', 'city', 'state', 'country', 'postal_code', 'national_id']
+
+    def retrieve(self, instance):
+        return self.data
+
+    def update(self, instance, validated_data):
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.date_of_birth = validated_data.get('date_of_birth', instance.date_of_birth)
+        instance.address = validated_data.get('address', instance.address)
+        instance.city = validated_data.get('city', instance.city)
+        instance.state = validated_data.get('state', instance.state)
+        instance.country = validated_data.get('country', instance.country)
+        instance.postal_code = validated_data.get('postal_code', instance.postal_code)
+        instance.national_id = validated_data.get('national_id', instance.national_id)
+        instance.save()
+        return instance
+
+
+
