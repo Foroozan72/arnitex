@@ -7,6 +7,10 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_204_NO_CONTENT
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
+from rest_framework.generics import RetrieveAPIView, UpdateAPIView
+
+from .models import Profile
+from .serializers import ProfileSerializer
 
 
 from .utils_jwt import get_tokens_for_user
@@ -132,21 +136,20 @@ class LogoutViewSet(CreateModelMixin, GenericViewSet):
         else:
             return Response({'error': 'The refresh_token field is required'}, status=HTTP_400_BAD_REQUEST)
         
-class ProfileViewSet(viewsets.GenericViewSet, RetrieveModelMixin, UpdateModelMixin):
-
+class UserProfileView(RetrieveAPIView, UpdateAPIView):
     queryset = Profile.objects.all()
-    serializer_class = serializers.ProfileSerializer
+    serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 
-    def retrieve(self, request, pk=None):
-        profile = get_object_or_404(self.queryset, pk=pk)
-        serializer = self.get_serializer(profile)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.retrieve(instance), status=status.HTTP_200_OK)
 
-    def update(self, request, pk=None):
-        profile = get_object_or_404(self.queryset, pk=pk)
-        serializer = self.get_serializer(profile, data=request.data)
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            serializer.update(instance, serializer.validated_data)
+            return Response(serializer.retrieve(instance), status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
