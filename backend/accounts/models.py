@@ -22,7 +22,6 @@ class UserManager(BaseUserManager):
         user.is_staff = True
         user.is_verified = True
         user.save(using=self._db)
-        Profile.objects.create(user=user)
         return user
 
 class User(AbstractBaseUser, PermissionsMixin):
