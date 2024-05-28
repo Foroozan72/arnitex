@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_204_NO_CONTENT
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
-from rest_framework.generics import RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import ListAPIView, UpdateAPIView
 
 from .models import Profile
 from .serializers import ProfileSerializer
@@ -23,13 +23,21 @@ class DevLogin(CreateModelMixin, GenericViewSet):
     
     def create(self, request):
         response = Response()
-        user, created = User.objects.get_or_create(phone_number=request.POST.get('phone_number'), email=request.POST.get('email'), is_superuser=True)
+        if request.POST.get('phone_number'):
+            user, created = User.objects.get_or_create(phone_number=request.POST.get('phone_number'), is_superuser=True)
 
-        access_token = get_tokens_for_user(user)['access']
-        refresh_token = get_tokens_for_user(user)['refresh']
+        elif request.POST.get('email'):
+            user, created = User.objects.get_or_create(email=request.POST.get('email'), is_superuser=True)
+        
+        else:
+            return Response('phone_number or email field is required.')
+
         if created:
             Profile.objects.create(user=user)
 
+        access_token = get_tokens_for_user(user)['access']
+        refresh_token = get_tokens_for_user(user)['refresh']
+        
         response.set_cookie(key='refreshtoken',
                             value=refresh_token, httponly=True)
         response.data = {
@@ -123,31 +131,27 @@ class ChangePassword(CreateModelMixin, GenericViewSet):
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 class LogoutViewSet(CreateModelMixin, GenericViewSet):
-    def create(self, request, *args, **kwargs):
-        refresh_token = request.data.get('refresh_token')
+    serializer_class = serializers.LogoutSerializer
 
-        if refresh_token:
-            try:
-                token = RefreshToken(refresh_token)
-                token.blacklist()
-                return Response(status=HTTP_204_NO_CONTENT)
-            except Exception as e:
-                return Response({'error': 'Invalid token'}, status=HTTP_400_BAD_REQUEST)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(status=HTTP_204_NO_CONTENT)
         else:
-            return Response({'error': 'The refresh_token field is required'}, status=HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
         
-class UserProfileView(RetrieveAPIView, UpdateAPIView):
-    queryset = Profile.objects.all()
+class UserProfileView(ListAPIView, UpdateAPIView):
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
+    def list(self, request, *args, **kwargs):
+        instance = self.request.user.profile
         serializer = self.get_serializer(instance)
         return Response(serializer.retrieve(instance), status=status.HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
-        instance = self.get_object()
+        instance = self.request.user.profile
         serializer = self.get_serializer(instance, data=request.data)
         if serializer.is_valid():
             serializer.update(instance, serializer.validated_data)

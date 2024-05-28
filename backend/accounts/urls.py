@@ -1,5 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import (
+    TokenRefreshView,
+)
 from . import views
 
 app_name = 'accounts'
@@ -13,10 +16,17 @@ router.register(r'login-verify', views.LoginVerify, basename='login-verify')
 router.register(r'forget-password-verify', views.ForgetPasswordVerify, basename='forget-password-verify')
 router.register(r'change-password', views.ChangePassword, basename='change-password')
 router.register(r'logout', views.LogoutViewSet, basename='logout')
+<<<<<<< HEAD
 
 
 urlpatterns = [
     path('', include(router.urls)),
     path('profile', views.UserProfileView.as_view(),name='profile'),
 
+=======
+urlpatterns = [
+    path('', include(router.urls)),
+    path('profile/', views.UserProfileView.as_view(), name='profile'), 
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+>>>>>>> 4fed469bb1ab4676239b8120af28cd02dda18ee2
 ]
