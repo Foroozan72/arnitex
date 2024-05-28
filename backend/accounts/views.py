@@ -1,5 +1,5 @@
 from rest_framework.permissions import AllowAny , IsAuthenticated
-from rest_framework.mixins import CreateModelMixin , RetrieveModelMixin, UpdateModelMixin
+from rest_framework.mixins import CreateModelMixin 
 from rest_framework.viewsets import GenericViewSet
 from rest_framework import viewsets , status
 from django.shortcuts import get_object_or_404
