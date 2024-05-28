@@ -131,18 +131,15 @@ class ChangePassword(CreateModelMixin, GenericViewSet):
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 class LogoutViewSet(CreateModelMixin, GenericViewSet):
-    def create(self, request, *args, **kwargs):
-        refresh_token = request.data.get('refresh_token')
+    serializer_class = serializers.LogoutSerializer
 
-        if refresh_token:
-            try:
-                token = RefreshToken(refresh_token)
-                token.blacklist()
-                return Response(status=HTTP_204_NO_CONTENT)
-            except Exception as e:
-                return Response({'error': 'Invalid token'}, status=HTTP_400_BAD_REQUEST)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(status=HTTP_204_NO_CONTENT)
         else:
-            return Response({'error': 'The refresh_token field is required'}, status=HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
         
 class UserProfileView(ListAPIView, UpdateAPIView):
     serializer_class = ProfileSerializer

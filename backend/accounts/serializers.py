@@ -1,10 +1,10 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from .utils_otp import SendOtp, get_user_otp
 from .utils_jwt import get_tokens_for_user
 from .models import Profile
 User = get_user_model()
-
 
 class CheckEmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -73,7 +73,8 @@ class RegisterVerifySerializer(serializers.Serializer):
     def save(self, **kwargs):
         if self.validated_data.get('phone_number'):
             user = User.objects.create_user(
-                phone_number=self.validated_data.get('phone_number'))
+                phone_number=self.validated_data.get('phone_number'), 
+                password=self.validated_data.get('password'))
             
         else:
             user = User.objects.create_user(
@@ -141,7 +142,6 @@ class LoginVerifySerializer(serializers.Serializer):
         self.validated_data["access"] = get_tokens_for_user(user)['access']
         self.validated_data["refresh"] = get_tokens_for_user(user)['refresh']
         return self.validated_data
-
 
 class ForgetPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField(required=False)
@@ -212,7 +212,23 @@ class ChangePasswordSerializer(serializers.Serializer):
         user.save()
 
         return self.validated_data
-    
+
+class LogoutSerializer(serializers.Serializer):
+    refresh_token = serializers.CharField(max_length=300)
+
+    def validate(self, attrs):
+        try:
+            token = RefreshToken(attrs['refresh_token'])
+        except Exception as e:
+            raise serializers.ValidationError("Invalid token")
+
+        return attrs
+
+    def save(self, **kwargs):
+        token = RefreshToken(self.validated_data['refresh_token'])
+        token.blacklist()
+        return self.validated_data
+
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
@@ -234,6 +250,3 @@ class ProfileSerializer(serializers.ModelSerializer):
         instance.national_id = validated_data.get('national_id', instance.national_id)
         instance.save()
         return instance
-
-
-
