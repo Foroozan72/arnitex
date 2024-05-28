@@ -4,6 +4,9 @@ from rest_framework import status
 from accounts.models import User
 from django.core.cache import cache
 from .models import Profile
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 
@@ -244,79 +247,75 @@ class TestChangePassword(APITestCase):
         response = self.client.post(self.register_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-# class ProfileAPITestCase(APITestCase):
-#     def setUp(self):
-#         self.user = User.objects.create_user(username='testuser', password='password123')
-#         self.client = APIClient()
+class ProfileAPITestCase(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create(email='testuser@example.com', password='password123')
+        self.client = APIClient()
         
-#         # Obtain JWT token for the user
-#         refresh = RefreshToken.for_user(self.user)
-#         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
-
-#         def setUp(self):
-#         self.client = APIClient()
-#         self.register_url = reverse('accounts:login-verify-list')
+        # Obtain JWT token for the user
+        refresh = RefreshToken.for_user(self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
         
-#         # Create profiles
-#         # English profile
-#         self.profile_en = Profile.objects.create(
-#             user=self.user,
-#             first_name='John',
-#             last_name='Doe',
-#             date_of_birth='1990-01-01',
-#             address='123 Main St',
-#             city='Anytown',
-#             state='CA',
-#             country='USA',
-#             postal_code='12345',
-#             national_id='1234567890'
-#         )
+        # Create profiles
+        # English profile
+        self.profile_en = Profile.objects.create(
+            user=self.user,
+            first_name='John',
+            last_name='Doe',
+            date_of_birth='1990-01-01',
+            address='123 Main St',
+            city='Anytown',
+            state='CA',
+            country='USA',
+            postal_code='12345',
+            national_id='1234567890'
+        )
 
-#         # Persian profile
-#         self.profile_fa = Profile.objects.create(
-#             user=self.user,
-#             first_name='پویا',
-#             last_name='کاشانی',
-#             date_of_birth='۱۳۶۹-۱۰-۱۰',
-#             address='خیابان اصلی ۱۲۳',
-#             city='تهران',
-#             state=' ',
-#             country='ایران',
-#             postal_code='۱۲۳۴۵',
-#             national_id='۱۲۳۴۵۶۷۸۹۰'
-#         )
+        # Persian profile
+        self.profile_fa = Profile.objects.create(
+            user=self.user,
+            first_name='پویا',
+            last_name='کاشانی',
+            date_of_birth='۱۳۶۹-۱۰-۱۰',
+            address='خیابان اصلی ۱۲۳',
+            city='تهران',
+            state=' ',
+            country='ایران',
+            postal_code='۱۲۳۴۵',
+            national_id='۱۲۳۴۵۶۷۸۹۰'
+        )
 
-#         # Arabic profile
-#         self.profile_ar = Profile.objects.create(
-#             user=self.user,
-#             first_name='علی',
-#             last_name='دو',
-#             date_of_birth='١٩٩٠-٠١-٠١',
-#             address='شارع الرئيسي ۱۲۳',
-#             city='أي بلد',
-#             state='  ',
-#             country='الولايات المتحدة العربی',
-#             postal_code='۱۲۳٤٥',
-#             national_id='۱۲۳٤٥٦٧٨٩٠'
-#         )
+        # Arabic profile
+        self.profile_ar = Profile.objects.create(
+            user=self.user,
+            first_name='علی',
+            last_name='دو',
+            date_of_birth='١٩٩٠-٠١-٠١',
+            address='شارع الرئيسي ۱۲۳',
+            city='أي بلد',
+            state='  ',
+            country='الولايات المتحدة العربی',
+            postal_code='۱۲۳٤٥',
+            national_id='۱۲۳٤٥٦٧٨٩٠'
+        )
 
-#     def test_retrieve_profile(self):
-#         # English language
-#         url_en = reverse('profile-detail', kwargs={'pk': self.profile_en.id})
-#         response_en = self.client.get(url_en)
-#         self.assertEqual(response_en.status_code, status.HTTP_200_OK)
-#         self.assertEqual(response_en.data['first_name'], 'John')
+    def test_retrieve_profile(self):
+        # English language
+        url_en = reverse('profile-detail', kwargs={'pk': self.profile_en.pk})
+        response_en = self.client.get(url_en)
+        self.assertEqual(response_en.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_en.data['first_name'], 'John')
 
-#         # Persian language
-#         self.client.cookies['django_language'] = 'fa'
-#         url_fa = reverse('profile-detail', kwargs={'pk': self.profile_fa.id})
-#         response_fa = self.client.get(url_fa)
-#         self.assertEqual(response_fa.status_code, status.HTTP_200_OK)
-#         self.assertEqual(response_fa.data['first_name'], 'پویا')
+        # Persian language
+        self.client.cookies['django_language'] = 'fa'
+        url_fa = reverse('profile-detail', kwargs={'pk': self.profile_fa.pk})
+        response_fa = self.client.get(url_fa)
+        self.assertEqual(response_fa.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_fa.data['first_name'], 'پویا')
 
-#         # Arabic language
-#         self.client.cookies['django_language'] = 'ar'
-#         url_ar = reverse('profile-detail', kwargs={'pk': self.profile_ar.id})
-#         response_ar = self.client.get(url_ar)
-#         self.assertEqual(response_ar.status_code, status.HTTP_200_OK)
-#         self.assertEqual(response_ar.data['first_name'], 'علی')
+        # Arabic language
+        self.client.cookies['django_language'] = 'ar'
+        url_ar = reverse('profile-detail', kwargs={'pk': self.profile_ar.pk})
+        response_ar = self.client.get(url_ar)
+        self.assertEqual(response_ar.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_ar.data['first_name'], 'علی')

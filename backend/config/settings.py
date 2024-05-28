@@ -34,6 +34,7 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
 # Application definition
 LOCAL_APPS = [
     'accounts.apps.AccountsConfig', 
+    'basic_info.apps.BasicInfoConfig',  
     'utils.apps.UtilsConfig',  
 ]
 THIRD_PARTY_APPS  = [
