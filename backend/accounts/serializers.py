@@ -6,6 +6,7 @@ from .utils_jwt import get_tokens_for_user
 from .models import Profile
 User = get_user_model()
 
+
 class CheckEmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
