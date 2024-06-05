@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from utils.models import TimeStamp, UUID
+from django.utils.translation import ugettext_lazy as _
 
 class UserManager(BaseUserManager):
     def create_user(self, email=None, phone_number=None, password=None):
@@ -25,8 +26,8 @@ class UserManager(BaseUserManager):
         return user
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(unique=True, null=True)
-    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(_('ایمیل'),unique=True, null=True)
+    phone_number = models.CharField(_('شماره همراه'),max_length=20, blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
     is_verified = models.BooleanField(default=False)
@@ -41,14 +42,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         return f"{self.email} - {self.phone_number}"
 
 class Profile(TimeStamp, UUID):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    date_of_birth = models.DateField(null=True, blank=True)
-    address = models.CharField(max_length=255, null=True, blank=True)
-    city = models.CharField(max_length=50, null=True, blank=True)
-    state = models.CharField(max_length=50, null=True, blank=True)
-    country = models.CharField(max_length=50, null=True, blank=True)
-    postal_code = models.CharField(max_length=20, null=True, blank=True)
-    national_id = models.CharField(max_length=50, null=True, blank=True)
+    user = models.OneToOneField(_('نام کاربری'),User, on_delete=models.CASCADE, related_name='profile')
+    first_name = models.CharField(_('نام'),max_length=50)
+    last_name = models.CharField(_('نام خانوادگی'),max_length=50)
+    date_of_birth = models.DateField(_('تاریخ تولد'),null=True, blank=True)
+    address = models.CharField(_('آدرس'),max_length=255, null=True, blank=True)
+    city = models.CharField(_('شهر'),max_length=50, null=True, blank=True)
+    state = models.CharField(_('استان'),max_length=50, null=True, blank=True)
+    country = models.CharField(_('کشور'),max_length=50, null=True, blank=True)
+
+    
+    postal_code = models.CharField(_('کد پستی'),max_length=20, null=True, blank=True)
+    national_id = models.CharField(_('ملیت'),max_length=50, null=True, blank=True)
     # profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)

@@ -195,3 +195,11 @@ LANGUAGES = [
     ("ru", "Russian"),
     ("ar", "Arabic"),
 ] 
+
+
+USE_I18N = True
+
+LANGUAGES = [
+    ('en', 'English'),
+    ('fa', 'Persian'),
+]
