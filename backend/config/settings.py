@@ -178,3 +178,10 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=10),
 }
+
+USE_I18N = True
+
+LANGUAGES = [
+    ('en', 'English'),
+    ('fa', 'Persian'),
+]

@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from utils.models import TimeStamp, UUID
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 class UserManager(BaseUserManager):
     def create_user(self, email=None, phone_number=None, password=None):
@@ -26,15 +26,18 @@ class UserManager(BaseUserManager):
         return user
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(_('ایمیل'),unique=True, null=True)
-    phone_number = models.CharField(_('شماره همراه'),max_length=20, blank=True, null=True)
-    date_joined = models.DateTimeField(auto_now_add=True)
-    last_login = models.DateTimeField(auto_now=True)
-    is_verified = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
+    email = models.EmailField(unique=True, null=True, verbose_name=_('Email'))
+    phone_number = models.CharField(max_length=20, blank=True, null=True , verbose_name=_('Phone_number'))
+    date_joined = models.DateTimeField(auto_now_add=True, verbose_name=_('Date_joined'))
+    last_login = models.DateTimeField(auto_now=True, verbose_name=_('Last_login'))
+    is_verified = models.BooleanField(default=False, verbose_name=_('Is_verified'))
+    is_staff = models.BooleanField(default=False, verbose_name=_('Is_staff'))
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['phone_number']
+    class Meta():
+        verbose_name = _('User')
+        verbose_name_plural = _('Users')
 
     objects = UserManager()
 
@@ -42,16 +45,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         return f"{self.email} - {self.phone_number}"
 
 class Profile(TimeStamp, UUID):
-    user = models.OneToOneField(_('نام کاربری'),User, on_delete=models.CASCADE, related_name='profile')
-    first_name = models.CharField(_('نام'),max_length=50)
-    last_name = models.CharField(_('نام خانوادگی'),max_length=50)
-    date_of_birth = models.DateField(_('تاریخ تولد'),null=True, blank=True)
-    address = models.CharField(_('آدرس'),max_length=255, null=True, blank=True)
-    city = models.CharField(_('شهر'),max_length=50, null=True, blank=True)
-    state = models.CharField(_('استان'),max_length=50, null=True, blank=True)
-    country = models.CharField(_('کشور'),max_length=50, null=True, blank=True)
-
-    
-    postal_code = models.CharField(_('کد پستی'),max_length=20, null=True, blank=True)
-    national_id = models.CharField(_('ملیت'),max_length=50, null=True, blank=True)
+    user = models.OneToOneField(User , on_delete = models.CASCADE ,  related_name='profile', verbose_name=_('User'))
+    first_name = models.CharField(max_length=50, verbose_name=_('First_name'))
+    last_name = models.CharField(max_length=50, verbose_name=_('Last_name'))
+    date_of_birth = models.DateField(null=True, blank=True, verbose_name=_('Date_of_birth'))
+    address = models.CharField(max_length=255, null=True, blank=True, verbose_name=_('Address'))
+    city = models.CharField(max_length=50, null=True, blank=True, verbose_name=_('City'))
+    state = models.CharField(max_length=50, null=True, blank=True, verbose_name=_('State'))
+    country = models.CharField(max_length=50, null=True, blank=True, verbose_name=_('Country'))
+    postal_code = models.CharField(max_length=20, null=True, blank=True, verbose_name=_('Postal_code'))
+    national_id = models.CharField(max_length=50, null=True, blank=True, verbose_name=_('National_id'))
     # profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
