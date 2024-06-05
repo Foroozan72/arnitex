@@ -2,8 +2,8 @@
 
 from django.shortcuts import render
 from rest_framework import viewsets
-from .models import Country, City, State
-from .serializers import CountrySerializer, CitySerializer, StateSerializer
+from .models import Country, City
+from .serializers import CountrySerializer, CitySerializer
 
 
 class CountryViewSetApiView(viewsets.ModelViewSet):
@@ -15,7 +15,3 @@ class CityViewSetApiView(viewsets.ModelViewSet):
     queryset = City.objects.all()
     serializer_class = CitySerializer
 
-
-class StateViewSetApiView(viewsets.ModelViewSet):
-    queryset = State.objects.all()
-    serializer_class = StateSerializer
