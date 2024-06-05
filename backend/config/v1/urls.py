@@ -5,5 +5,4 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('basic/', include('basic_info.urls')),
     path('', include(swagger_urlpatterns)),
-    path('csc/', include('countries_states_cities.urls')),
 ]

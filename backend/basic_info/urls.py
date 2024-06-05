@@ -7,7 +7,6 @@ router = DefaultRouter()
 
 router.register(r'country', views.CountryViewSetApiView, basename='country')
 router.register(r'city', views.CityViewSetApiView, basename='city')
-router.register(r'state', views.StateViewSetApiView, basename='state')
 
 
 urlpatterns = [

@@ -13,7 +13,6 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from datetime import timedelta
-from decouple import config
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,9 +42,6 @@ THIRD_PARTY_APPS  = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
-    'modeltranslation',         #countries_states_cities
-    'import_export',            #countries_states_cities
-    'countries_states_cities',  #countries_states_cities
 ]
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -182,16 +178,3 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=10),
 }
-
-WEB_SERVICE_URL = config('WEB_SERVICE_URL')
-
-LANGUAGES = [
-    ("en", "English"),
-    ("ko", "Korean"),
-    ("ja", "Japanese"),
-    ('zh-hans', 'Simplified Chinese'),  # 간체 중국어
-    ('zh-hant', 'Traditional Chinese'),  # 번체 중국어
-    ("es", "Spanish"),
-    ("ru", "Russian"),
-    ("ar", "Arabic"),
-] 
