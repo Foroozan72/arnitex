@@ -5,8 +5,10 @@ from rest_framework.routers import DefaultRouter
 app_name = 'basic_info'
 router = DefaultRouter()
 
-router.register(r'country', views.CountryViewSetApiView, basename='country')
-router.register(r'city', views.CityViewSetApiView, basename='city')
+router.register(r'country', views.CountryViewSet, basename='country')
+router.register(r'city', views.CityViewSet, basename='city')
+router.register(r'country-read', views.CountryReadOnlyViewSet, basename='country-read')
+router.register(r'city-read', views.CityReadOnlyViewSet, basename='city-read')
 
 
 urlpatterns = [
