@@ -37,6 +37,7 @@ LOCAL_APPS = [
     'accounts.apps.AccountsConfig', 
     'basic_info.apps.BasicInfoConfig',  
     'utils.apps.UtilsConfig',  
+    'support.apps.SupportConfig',  
 ]
 THIRD_PARTY_APPS  = [
     'rest_framework',

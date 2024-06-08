@@ -24,10 +24,10 @@ class DevLogin(CreateModelMixin, GenericViewSet):
     def create(self, request):
         response = Response()
         if request.POST.get('phone_number'):
-            user, created = User.objects.get_or_create(phone_number=request.POST.get('phone_number'), is_superuser=True)
+            user, created = User.objects.get_or_create(phone_number=request.POST.get('phone_number'))
 
         elif request.POST.get('email'):
-            user, created = User.objects.get_or_create(email=request.POST.get('email'), is_superuser=True)
+            user, created = User.objects.get_or_create(email=request.POST.get('email'))
         
         else:
             return Response('phone_number or email field is required.')

@@ -1,7 +1,5 @@
-# Create your views here.
-
-from django.shortcuts import render
 from rest_framework import viewsets
+from rest_framework.permissions import AllowAny
 from .models import Country, City
 from .serializers import CountrySerializer, CitySerializer
 from .permissions import IsSuperuser
@@ -30,6 +28,7 @@ class CityViewSet(viewsets.ModelViewSet):
     search_fields = ['title']
 
 class CountryReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [AllowAny]
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
@@ -38,6 +37,7 @@ class CountryReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ['title']
 
 class CityReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [AllowAny]
     queryset = City.objects.all()
     serializer_class = CitySerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
