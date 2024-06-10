@@ -37,6 +37,7 @@ LOCAL_APPS = [
     'accounts.apps.AccountsConfig', 
     'basic_info.apps.BasicInfoConfig',  
     'utils.apps.UtilsConfig',  
+    'media_hub.apps.MediaHubConfig', 
     'support.apps.SupportConfig',  
 ]
 THIRD_PARTY_APPS  = [
@@ -154,6 +155,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = 'static'
+MEDIA_URL = "/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
