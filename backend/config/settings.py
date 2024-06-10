@@ -35,8 +35,9 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
 # Application definition
 LOCAL_APPS = [
     'accounts.apps.AccountsConfig', 
-    'basic_info.apps.BasicInfoConfig',  
-    'utils.apps.UtilsConfig',  
+    'basic_info.apps.BasicInfoConfig', 
+    'utils.apps.UtilsConfig', 
+    'media_hub.apps.MediaHubConfig', 
 ]
 THIRD_PARTY_APPS  = [
     'rest_framework',
@@ -153,6 +154,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = 'static'
+MEDIA_URL = "/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
