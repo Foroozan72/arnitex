@@ -20,9 +20,10 @@ class City(TimeStamp, UUID):
     def __str__(self):
         return f"{self.title} - {self.is_show}"
 
-class Digitalcurrency(TimeStamp, UUID):
-    name = models.CharField(max_length=100, verbose_name=_('Name'))
-    is_show = models.BooleanField(default=True, verbose_name=_('Is show?'))
+class CryptoCurrency(TimeStamp, UUID):
+    coin_id = models.CharField(max_length=100, verbose_name=_('Coin id'))
+    coin_name = models.CharField(max_length=100, verbose_name=_('Coin name'))
+    is_active = models.BooleanField(default=True, verbose_name=_('Is active?'))
 
     class Meta:
-        verbose_name, verbose_name_plural = _('Digital Currency'), _('Digital currencies')
+        verbose_name, verbose_name_plural = _('Crypto currency'), _('Crypto currencie')
