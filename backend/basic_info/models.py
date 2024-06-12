@@ -4,7 +4,8 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Country(TimeStamp, UUID):
-    title = models.CharField( max_length=200, verbose_name=_('Title'))
+    title = models.CharField(max_length=200, verbose_name=_('Title'))
+    flag = models.CharField(max_length=200, verbose_name=_('Flag'))
     is_show = models.BooleanField(default=True, verbose_name=_('Is_show'))
 
 
