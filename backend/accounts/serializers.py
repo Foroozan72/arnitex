@@ -37,7 +37,8 @@ class SendOTPSerializer(serializers.Serializer):
 class RegisterVerifySerializer(serializers.Serializer):
     email = serializers.EmailField(required=False)
     phone_number = serializers.CharField(max_length=11, required=False)
-    password = serializers.CharField(max_length=20)
+    password1 = serializers.CharField(max_length=20)
+    password2 = serializers.CharField(max_length=20)
     otp = serializers.IntegerField(
         min_value=10000, max_value=999999, write_only=True, required=True
     )
@@ -50,6 +51,9 @@ class RegisterVerifySerializer(serializers.Serializer):
     
         elif attrs.get('email') and attrs.get('phone_number'):
             raise serializers.ValidationError("Please send only one between the email and phone number fields.")
+    
+        elif attrs.get('password1') != attrs.get('password2'):
+            raise serializers.ValidationError("The password is not the same.")
         
         elif attrs.get('email'):
             if User.objects.filter(email=attrs.get('email')):
@@ -75,12 +79,12 @@ class RegisterVerifySerializer(serializers.Serializer):
         if self.validated_data.get('phone_number'):
             user = User.objects.create_user(
                 phone_number=self.validated_data.get('phone_number'), 
-                password=self.validated_data.get('password'))
+                password=self.validated_data.get('password1'))
             
         else:
             user = User.objects.create_user(
                 email=self.validated_data.get('email'), 
-                password=self.validated_data.get('password'))
+                password=self.validated_data.get('password1'))
 
         self.validated_data["access"] = get_tokens_for_user(user)['access']
         self.validated_data["refresh"] = get_tokens_for_user(user)['refresh']

@@ -18,6 +18,7 @@ class ListCryptoCurrensy(viewsets.ReadOnlyModelViewSet):
         for crypto in crypto_list:
             if sparkline:
                 crypto_data.append({
+                    "id": crypto['id'], 
                     "name": crypto['name'], 
                     "symbol": crypto['symbol'], 
                     "current_price": crypto['current_price'], 
@@ -29,6 +30,7 @@ class ListCryptoCurrensy(viewsets.ReadOnlyModelViewSet):
                 })
             else:
                 crypto_data.append({
+                    "id": crypto['id'], 
                     "name": crypto['name'], 
                     "symbol": crypto['symbol'], 
                     "current_price": crypto['current_price'], 
@@ -39,3 +41,13 @@ class ListCryptoCurrensy(viewsets.ReadOnlyModelViewSet):
                 })
 
         return Response({'data': crypto_data})
+
+class SwapCryptoCurrensy(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    permission_classes = [AllowAny]
+    serializer_class = serializers.SwapCryptoCurrensySerializer
+
+
+class SwapDollarCryptoCurrensy(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    permission_classes = [AllowAny]
+    serializer_class = serializers.SwapDollarCryptoCurrensySerializer
+
