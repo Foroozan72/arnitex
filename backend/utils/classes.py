@@ -25,12 +25,12 @@ class APICryptoCurrency():
             coins_id_list.append(i.coin_id)
         return coins_id_list
 
-    def get_coins_info():
+    def get_coins_info(sparkline):
         url = f"https://api.coingecko.com/api/v3/coins/markets"
         params = {
             'vs_currency': 'usd',
             'order': 'market_cap_desc',
-            'sparkline': 'true'
+            'sparkline': str(sparkline).lower(), 
         }
         response = requests.get(url, params=params)
         if response.status_code == 200:
@@ -38,9 +38,9 @@ class APICryptoCurrency():
         else:
             return None
 
-    def crypto_currencies(limit):
+    def crypto_currencies(limit, sparkline):
         valid_coins = APICryptoCurrency.local_coins()
-        all_coins = APICryptoCurrency.get_coins_info()
+        all_coins = APICryptoCurrency.get_coins_info(sparkline)
         coins = []
 
         count = 0

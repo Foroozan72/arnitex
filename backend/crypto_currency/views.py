@@ -12,18 +12,30 @@ class ListCryptoCurrensy(viewsets.ReadOnlyModelViewSet):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         limit = serializer.validated_data.get('limit')
-        crypto_list = APICryptoCurrency.crypto_currencies(limit)
+        sparkline = serializer.validated_data.get('sparkline')
+        crypto_list = APICryptoCurrency.crypto_currencies(limit=limit, sparkline=sparkline)
         crypto_data = []
         for crypto in crypto_list:
-            crypto_data.append({
-                "name": crypto['name'], 
-                "symbol": crypto['symbol'], 
-                "current_price": crypto['current_price'], 
-                "ath_change_percentage": crypto['ath_change_percentage'], 
-                "market_cap": crypto['market_cap'], 
-                "total_volume": crypto['total_volume'], 
-                "price_change_percentage_24h": crypto['sparkline_in_7d']['price'], 
-                "image": crypto['image'], 
-            })
+            if sparkline:
+                crypto_data.append({
+                    "name": crypto['name'], 
+                    "symbol": crypto['symbol'], 
+                    "current_price": crypto['current_price'], 
+                    "ath_change_percentage": crypto['ath_change_percentage'], 
+                    "market_cap": crypto['market_cap'], 
+                    "total_volume": crypto['total_volume'], 
+                    "sparkline_in_7d": crypto['sparkline_in_7d']['price'], 
+                    "image": crypto['image'], 
+                })
+            else:
+                crypto_data.append({
+                    "name": crypto['name'], 
+                    "symbol": crypto['symbol'], 
+                    "current_price": crypto['current_price'], 
+                    "ath_change_percentage": crypto['ath_change_percentage'], 
+                    "market_cap": crypto['market_cap'], 
+                    "total_volume": crypto['total_volume'], 
+                    "image": crypto['image'], 
+                })
 
         return Response({'data': crypto_data})
