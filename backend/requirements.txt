@@ -5,6 +5,7 @@ charset-normalizer==3.3.2
 contourpy==1.2.1
 cycler==0.12.1
 Django==4.2
+django-cors-headers==4.3.1
 django-filter==24.2
 django-redis==5.4.0
 djangorestframework==3.15.1
