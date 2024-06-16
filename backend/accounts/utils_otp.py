@@ -14,7 +14,7 @@ def get_user_otp(phone_number=None, email=None):
 class SendOtp:
 	@staticmethod
 	def generate_otp():
-		totp = pyotp.TOTP(s=pyotp.random_base32())
+		totp = pyotp.TOTP(s=pyotp.random_base32(), digits=5)
 		code = totp.now()
 		print('code: ', code)
 		return code
