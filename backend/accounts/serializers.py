@@ -40,7 +40,7 @@ class RegisterVerifySerializer(serializers.Serializer):
     password1 = serializers.CharField(max_length=20)
     password2 = serializers.CharField(max_length=20)
     otp = serializers.IntegerField(
-        min_value=10000, max_value=999999, write_only=True, required=True
+        min_value=10000, max_value=99999, write_only=True, required=True
     )
     refresh = serializers.CharField(max_length=128, read_only=True)
     access = serializers.CharField(max_length=128, read_only=True)
@@ -95,7 +95,7 @@ class LoginVerifySerializer(serializers.Serializer):
     phone_number = serializers.CharField(max_length=11, required=False)
     password = serializers.CharField(max_length=20)
     otp = serializers.IntegerField(
-        min_value=10000, max_value=999999, write_only=True, required=True
+        min_value=10000, max_value=99999, write_only=True, required=True
     )
     refresh = serializers.CharField(max_length=128, read_only=True)
     access = serializers.CharField(max_length=128, read_only=True)
