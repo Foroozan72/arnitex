@@ -3,6 +3,7 @@ import requests
 from datetime import datetime
 from support.models import Ticket
 from basic_info.models import CryptoCurrency
+from pycoingecko import CoinGeckoAPI
 
 class GenerateTrackingCode():
     def dictionary(model):
@@ -25,29 +26,34 @@ class APICryptoCurrency():
             coins_id_list.append(i.coin_id)
         return coins_id_list
 
-    def get_coins_info(sparkline):
-        url = f"https://api.coingecko.com/api/v3/coins/markets"
-        params = {
-            'vs_currency': 'usd',
-            'order': 'market_cap_desc',
-            'sparkline': str(sparkline).lower(), 
+    def get_coin_data(coin_id):
+        cg = CoinGeckoAPI()
+        data = cg.get_coin_market_chart_by_id(id=coin_id, vs_currency='usd', days=7)
+        market_data = cg.get_coins_markets(vs_currency='usd', ids=coin_id)
+    
+        coin_info = {
+            "ID": market_data[0]['id'],
+            "Name": market_data[0]['name'],
+            "Symbol": market_data[0]['symbol'],
+            "Current Price": market_data[0]['current_price'],
+            "24h Change": market_data[0]['price_change_percentage_24h'],
+            "24h Volume": market_data[0]['total_volume'],
+            "Market Cap": market_data[0]['market_cap'],
+            "Image": market_data[0]['image'],
+            # "Weekly Chart": data['prices']
         }
-        response = requests.get(url, params=params)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            return None
+        return coin_info
 
-    def crypto_currencies(limit, sparkline):
+    def crypto_currencies(limit):
         valid_coins = APICryptoCurrency.local_coins()
-        all_coins = APICryptoCurrency.get_coins_info(sparkline)
         coins = []
 
         count = 0
-        for i in all_coins:
+        for i in valid_coins:
             if count == limit:
                 break
-            elif i['id'] in valid_coins:
-                coins.append(i)
+            else:
+                coins.append(APICryptoCurrency.get_coin_data(i))
                 count+=1
-        return coins
+        sorted_coin_list = sorted(coins, key=lambda x: x['Market Cap'], reverse=True)
+        return sorted_coin_list

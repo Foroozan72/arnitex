@@ -13,31 +13,32 @@ class ListCryptoCurrensy(viewsets.ReadOnlyModelViewSet):
         serializer.is_valid(raise_exception=True)
         limit = serializer.validated_data.get('limit')
         sparkline = serializer.validated_data.get('sparkline')
-        crypto_list = APICryptoCurrency.crypto_currencies(limit=limit, sparkline=sparkline)
+        crypto_list = APICryptoCurrency.crypto_currencies(limit=limit)
         crypto_data = []
+        
         for crypto in crypto_list:
             if sparkline:
                 crypto_data.append({
-                    "id": crypto['id'], 
-                    "name": crypto['name'], 
-                    "symbol": crypto['symbol'], 
-                    "current_price": crypto['current_price'], 
-                    "ath_change_percentage": crypto['ath_change_percentage'], 
-                    "market_cap": crypto['market_cap'], 
-                    "total_volume": crypto['total_volume'], 
-                    "sparkline_in_7d": crypto['sparkline_in_7d']['price'], 
-                    "image": crypto['image'], 
+                    "id": crypto['ID'], 
+                    "name": crypto['Name'], 
+                    "symbol": crypto['Symbol'], 
+                    "current_price": crypto['Current Price'], 
+                    "24h_change": crypto['24h Change'], 
+                    "24h_volume": crypto['24h Volume'], 
+                    "market_cap": crypto['Market Cap'], 
+                    "image": crypto['Image'], 
+                    "weekly_chart": crypto['Weekly Chart'], 
                 })
             else:
                 crypto_data.append({
-                    "id": crypto['id'], 
-                    "name": crypto['name'], 
-                    "symbol": crypto['symbol'], 
-                    "current_price": crypto['current_price'], 
-                    "ath_change_percentage": crypto['ath_change_percentage'], 
-                    "market_cap": crypto['market_cap'], 
-                    "total_volume": crypto['total_volume'], 
-                    "image": crypto['image'], 
+                    "id": crypto['ID'], 
+                    "name": crypto['Name'], 
+                    "symbol": crypto['Symbol'], 
+                    "current_price": crypto['Current Price'], 
+                    "24h_change": crypto['24h Change'], 
+                    "24h_volume": crypto['24h Volume'], 
+                    "market_cap": crypto['Market Cap'], 
+                    "image": crypto['Image'], 
                 })
 
         return Response({'data': crypto_data})
