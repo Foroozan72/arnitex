@@ -19,10 +19,10 @@ class SendOTPSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         if attrs.get('email') is None and attrs.get('phone_number') is None:
-            raise serializers.ValidationError("Sending one of the email and phone number fields is required.")
+            raise serializers.ValidationError({"EN": "Sending one of the email and phone number fields is required.", "FA": "لطفا  یکی از فیلد های تلفن یا ایمیل را وارد کنید"})
     
         elif attrs.get('email') and attrs.get('phone_number'):
-            raise serializers.ValidationError("Please send only one between the email and phone number fields.")
+            raise serializers.ValidationError({"EN": "Please send only one between the email and phone number fields.", "FA": "لطفا فقط یکی از فیلد های تلفن یا ایمیل را وارد کنید"})
         
         return attrs
 
@@ -47,10 +47,10 @@ class RegisterVerifySerializer(serializers.Serializer):
 
     def validate(self, attrs):
         if attrs.get('email') is None and attrs.get('phone_number') is None:
-            raise serializers.ValidationError("Sending one of the email and phone number fields is required.")
+            raise serializers.ValidationError({"EN": "Sending one of the email and phone number fields is required.", "FA": "لطفا  یکی از فیلد های تلفن یا ایمیل را وارد کنید"})
     
         elif attrs.get('email') and attrs.get('phone_number'):
-            raise serializers.ValidationError("Please send only one between the email and phone number fields.")
+            raise serializers.ValidationError({"EN": "Please send only one between the email and phone number fields.", "FA": "لطفا فقط یکی از فیلد های تلفن یا ایمیل را وارد کنید"})
     
         elif attrs.get('password1') != attrs.get('password2'):
             raise serializers.ValidationError("The password is not the same.")
