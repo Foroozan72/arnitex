@@ -71,13 +71,22 @@ MIDDLEWARE = [
 ]
 
 
+# CORS settings
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = os.environ.get(
-    "CORS_ALLOWED_ORIGINS").split(",")
-CSRF_TRUSTED_ORIGINS = os.environ.get(
-    "CSRF_TRUSTED_ORIGINS").split(",")
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
+
+# Retrieve environment variables
+cors_allowed_origins = os.environ.get("CORS_ALLOWED_ORIGINS", "")
+csrf_trusted_origins = os.environ.get("CSRF_TRUSTED_ORIGINS", "")
+
+# Safely split the environment variables into lists
+CORS_ALLOWED_ORIGINS = cors_allowed_origins.split(",") if cors_allowed_origins else []
+CSRF_TRUSTED_ORIGINS = csrf_trusted_origins.split(",") if csrf_trusted_origins else []
+
+# Debugging: Print to verify
+print("CORS_ALLOWED_ORIGINS:", CORS_ALLOWED_ORIGINS)
+print("CSRF_TRUSTED_ORIGINS:", CSRF_TRUSTED_ORIGINS)
 
 ROOT_URLCONF = 'config.urls'
 
