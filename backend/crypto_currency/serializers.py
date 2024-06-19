@@ -2,7 +2,7 @@ from rest_framework import serializers
 from pycoingecko import CoinGeckoAPI
 
 class ListCryptoCurrensySerializer(serializers.Serializer):
-    limit = serializers.IntegerField(default=10)
+    limit = serializers.IntegerField(default=100000)
     sparkline = serializers.BooleanField(default=False)
 
     # def list
