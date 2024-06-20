@@ -33,10 +33,10 @@ class SwapDollarCryptoCurrensySerializer(serializers.Serializer):
 
     def validate(self, attrs):
         if attrs['number_of_coin'] == 0 and attrs['dollar'] == 0:
-            raise serializers.ValidationError("Sending one of the number_of_coin and dollar fields is required.")
+            raise serializers.ValidationError({'EN': "Please provide either the 'number_of_coin' or 'dollar' field in your request", "FA": "لطفاً یکی از فیلدهای 'number_of_coin' یا 'dollar' را وارد کنید"})
 
         elif attrs['number_of_coin'] != 0 and attrs['dollar'] != 0:
-            raise serializers.ValidationError("Please send only one between the number_of_coin and dollar fields.")
+            raise serializers.ValidationError({'EN':"Please send only one between the number_of_coin and dollar fields." , "FA": "لطفاً تنها یکی از فیلدهای 'number_of_coin' یا 'dollar' را در درخواست خود ارسال کنید."})
 
         return attrs
 
