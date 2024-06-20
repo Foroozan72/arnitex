@@ -1,11 +1,11 @@
 from rest_framework import serializers
 from pycoingecko import CoinGeckoAPI
+from basic_info.models import CryptoCurrency
 
-class ListCryptoCurrensySerializer(serializers.Serializer):
-    limit = serializers.IntegerField(default=100000)
-    sparkline = serializers.BooleanField(default=False)
-
-    # def list
+class ListCryptoCurrensySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CryptoCurrency
+        fields = ['coin_id', 'coin_name', 'coin_symbol', 'coin_image']
 
 class SwapCryptoCurrensySerializer(serializers.Serializer):
     coin1 = serializers.CharField(max_length=100)
