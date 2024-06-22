@@ -2,4 +2,4 @@
 python manage.py migrate --no-input
 python manage.py collectstatic --no-input
 
-daphne -b 0.0.0.0 -p 8000 config.asgi:application
+uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --log-level info
