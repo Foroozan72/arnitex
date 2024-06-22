@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Country , City, CryptoCurrency
+from .models import Country , City, CryptoCurrency , Wallet
 
 class CountryAdmin(admin.ModelAdmin):
     list_display = ['title']
@@ -17,6 +17,13 @@ class CryptoCurrencyAdmin(admin.ModelAdmin):
     search_fields = ['coin_name', 'coin_id']
     list_filter = ['is_active']
 admin.site.register(CryptoCurrency, CryptoCurrencyAdmin)
+
+class WalletAdmin(admin.ModelAdmin):
+    list_display = ['wallet_name', 'wallet_id', 'is_active' , 'website_url']
+    search_fields = ['wallet_name', 'wallet_id']
+    list_filter = ['is_active']
+admin.site.register(Wallet, WalletAdmin)
+
 
 
 
