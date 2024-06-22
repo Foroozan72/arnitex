@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crypto Dashboard</title>
+</head>
+<body>
+    <h1>Crypto Dashboard</h1>
+    <label for="limit">Number of coins to display:</label>
+    <select id="limit">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+        <option value="all">All</option>
+    </select>
+    <table id="crypto-table">
+        <thead>
+            <tr>
+                <th>Coin ID</th>
+                <th>Current Price</th>
+                <th>24h Change</th>
+                <th>24h Volume</th>
+                <th>Market Cap</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script src="{% static 'reconnecting-websocket.js' %}"></script>
+    <script>
+        let coinLimit = 10; // Default limit
+        let socket;
+
+        document.getElementById('limit').addEventListener('change', function() {
+            const selectedValue = this.value;
+            coinLimit = selectedValue === 'all' ? 'all' : parseInt(selectedValue);
+            if (socket) {
+                socket.close();
+            }
+            connectWebSocket();
+        });
+
+        function connectWebSocket() {
+            const url = `ws://${window.location.host}/ws/crypto/${coinLimit === 'all' ? 10000 : coinLimit}/`;
+            socket = new ReconnectingWebSocket(url);
+
+            socket.onmessage = function(e) {
+                const coins = JSON.parse(e.data);
+                console.log(coins)
+                const tableBody = document.getElementById('crypto-table').getElementsByTagName('tbody')[0];
+                tableBody.innerHTML = '';
+
+                for (const coin of coins) {
+                    const row = tableBody.insertRow();
+                    row.insertCell(0).innerText = coin.coin_id;
+                    row.insertCell(1).innerText = coin.current_price;
+                    row.insertCell(2).innerText = coin.change_24h;
+                    row.insertCell(3).innerText = coin.volume_24h;
+                    row.insertCell(4).innerText = coin.market_cap;
+                }
+            };
+        }
+
+        connectWebSocket();
+    </script>
+</body>
+</html>

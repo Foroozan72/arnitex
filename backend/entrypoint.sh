@@ -2,4 +2,4 @@
 python manage.py migrate --no-input
 python manage.py collectstatic --no-input
 
-gunicorn config.wsgi:application --bind 0.0.0.0:8000 --access-logfile -
+uvicorn config.asgi:application --host 0.0.0.0 --port 8000 --log-level info

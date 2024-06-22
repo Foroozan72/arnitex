@@ -50,8 +50,10 @@ THIRD_PARTY_APPS  = [
     'drf_yasg',
     'django_filters',
     'corsheaders',
+    'channels', 
 ]
 INSTALLED_APPS = [
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -87,10 +89,6 @@ csrf_trusted_origins = os.environ.get("CSRF_TRUSTED_ORIGINS", "")
 CORS_ALLOWED_ORIGINS = cors_allowed_origins.split(",") if cors_allowed_origins else []
 CSRF_TRUSTED_ORIGINS = csrf_trusted_origins.split(",") if csrf_trusted_origins else []
 
-# Debugging: Print to verify
-print("CORS_ALLOWED_ORIGINS:", CORS_ALLOWED_ORIGINS)
-print("CSRF_TRUSTED_ORIGINS:", CSRF_TRUSTED_ORIGINS)
-
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
@@ -110,7 +108,7 @@ TEMPLATES = [
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
-WSGI_APPLICATION = 'config.wsgi.application'
+ASGI_APPLICATION = "config.asgi.application"
 
 
 # Database
@@ -141,7 +139,14 @@ CACHES = {
         }
     }
 }
-
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [f'redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}'],
+        },
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
