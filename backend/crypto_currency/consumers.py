@@ -27,7 +27,6 @@ class CryptoConsumer(AsyncWebsocketConsumer):
                 include_24hr_vol='true'
             )
 
-            # Process and sort the data
             coins = [
                 {
                     "coin_id": coin_id,
@@ -44,4 +43,4 @@ class CryptoConsumer(AsyncWebsocketConsumer):
             limited_coins = coins[:self.limit]
 
             await self.send(text_data=json.dumps(limited_coins))
-            await asyncio.sleep(5)  # Update every 60 seconds
+            await asyncio.sleep(5)  # Update every 5 seconds

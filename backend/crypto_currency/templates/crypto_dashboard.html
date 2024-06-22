@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,6 +26,7 @@
         <tbody>
         </tbody>
     </table>
+    <script src="{% static 'reconnecting-websocket.js' %}"></script>
     <script>
         let coinLimit = 10; // Default limit
         let socket;
@@ -40,10 +42,11 @@
 
         function connectWebSocket() {
             const url = `ws://${window.location.host}/ws/crypto/${coinLimit === 'all' ? 10000 : coinLimit}/`;
-            socket = new WebSocket(url);
+            socket = new ReconnectingWebSocket(url);
 
             socket.onmessage = function(e) {
                 const coins = JSON.parse(e.data);
+                console.log(coins)
                 const tableBody = document.getElementById('crypto-table').getElementsByTagName('tbody')[0];
                 tableBody.innerHTML = '';
 

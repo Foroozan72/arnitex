@@ -47,6 +47,7 @@ THIRD_PARTY_APPS  = [
     'drf_yasg',
     'django_filters',
     'corsheaders',
+    'channels', 
 ]
 INSTALLED_APPS = [
     "daphne",
@@ -135,7 +136,14 @@ CACHES = {
         }
     }
 }
-
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [f'redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}'],
+        },
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
