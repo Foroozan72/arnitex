@@ -39,7 +39,10 @@ LOCAL_APPS = [
     'utils.apps.UtilsConfig',  
     'media_hub.apps.MediaHubConfig', 
     'support.apps.SupportConfig',  
-    'crypto_currency.apps.CryptoCurrencyConfig'
+    'crypto_currency.apps.CryptoCurrencyConfig',
+    'wallet.apps.WalletConfig',
+
+    
 ]
 THIRD_PARTY_APPS  = [
     'rest_framework',

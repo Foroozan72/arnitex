@@ -27,3 +27,16 @@ class CryptoCurrency(TimeStamp, UUID):
 
     class Meta:
         verbose_name, verbose_name_plural = _('Crypto currency'), _('Crypto currencie')
+
+class Wallet(models.Model):
+    wallet_id = models.CharField(max_length=100 , verbose_name=_('Wallet'))
+    wallet_name = models.CharField(max_length=100, verbose_name=_('Wallet name'))
+    description = models.TextField(blank=True, null=True , verbose_name=_('Description'))
+    website_url = models.URLField(verbose_name=_('Website url'))
+    is_active = models.BooleanField(default=True, verbose_name=_('Is active?'))
+    logo = models.ImageField(upload_to='wallet/logos/', blank=True, null=True , verbose_name=_('Logo'))
+    qr_code = models.ImageField(upload_to='wallet/ qrcodes/', blank=True, null=True , verbose_name=_('QR code'))
+
+    def __str__(self):
+        return self.name
+    
