@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Country, City
+from .models import Country, City , Wallet
 
 
 class CitySerializer(serializers.ModelSerializer):
@@ -13,4 +13,9 @@ class CountrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Country
+        fields = '__all__'
+
+class WalletSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
         fields = '__all__'

@@ -23,8 +23,8 @@ class City(TimeStamp, UUID):
 class CryptoCurrency(TimeStamp, UUID):
     coin_id = models.CharField(max_length=100, verbose_name=_('Coin id'))
     coin_name = models.CharField(max_length=100, verbose_name=_('Coin name'))
-    coin_symbol = models.CharField(max_length=100, verbose_name=_('Coin symbol'))
-    coin_image = models.CharField(max_length=500, verbose_name=_('Coin image'))
+    coin_symbol = models.CharField(max_length=100, default='backend/basic_info/images/metamask.png' , verbose_name=_('Coin symbol'))
+    coin_image = models.CharField(max_length=500,default='backend/basic_info/images/metamask.png' , verbose_name=_('Coin image'))
     is_active = models.BooleanField(default=True, verbose_name=_('Is active?'))
 
     class Meta:
