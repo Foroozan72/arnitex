@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Wallet
+from .models import Transaction, Wallet
 
 class WalletSerializer(serializers.ModelSerializer):
     """
@@ -30,3 +30,39 @@ class WalletSerializer(serializers.ModelSerializer):
         user = validated_data.get('user')
         wallet = Wallet.objects.create(user=user)
         return wallet
+
+
+class TransactionSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Transaction model.
+
+    Serializes the user_wallet, action, amount, and timestamp fields.
+
+    Fields:
+    - user_wallet: The wallet associated with the transaction.
+    - action: The action of the transaction.
+    - amount: The amount of the transaction.
+    - timestamp: The timestamp of the transaction.
+    """
+    user_wallet = serializers.SlugRelatedField(slug_field='wallet_id', queryset=Wallet.objects.all())
+
+    class Meta:
+        model = Transaction
+        fields = ['user_wallet', 'action', 'amount', 'timestamp']
+
+    def create(self, validated_data):
+        """
+        Create and return a new `Transaction` instance, given the validated data.
+        """
+        return Transaction.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        """
+        Update and return an existing `Transaction` instance, given the validated data.
+        """
+        instance.user_wallet = validated_data.get('user_wallet', instance.user_wallet)
+        instance.action = validated_data.get('action', instance.action)
+        instance.amount = validated_data.get('amount', instance.amount)
+        instance.timestamp = validated_data.get('timestamp', instance.timestamp)
+        instance.save()
+        return instance

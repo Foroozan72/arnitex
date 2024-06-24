@@ -1,8 +1,10 @@
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from .models import Wallet
-from .serializers import WalletSerializer
+from rest_framework.permissions import IsAuthenticated , AllowAny
+from .models import Wallet ,Transaction
+from .serializers import WalletSerializer , TransactionSerializer
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 
 class CreateWalletViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
@@ -30,3 +32,56 @@ class CreateWalletViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
         serializer = self.get_serializer(wallet)
         return Response(serializer.data)
+
+
+class WalletReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Read-only API endpoint for viewing Wallet objects.
+
+    Methods:
+    - list(request, *args, **kwargs): Retrieves a list of all wallets.
+    - retrieve(request, *args, **kwargs): Retrieves a wallet by its ID.
+
+    Inputs:
+    - request: The HTTP request containing necessary data for the respective actions.
+
+    Outputs:
+    - response: JSON response with the details of the wallet or a list of wallets.
+
+    Permissions:
+    - AllowAny: No authentication required.
+    """
+    permission_classes = [AllowAny]
+    queryset = Wallet.objects.all()
+    serializer_class = WalletSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    filterset_fields = ['user']
+    ordering_fields = ['wallet_id', 'user', 'balance']
+    search_fields = ['wallet_id', 'user__username', 'balance']
+
+
+
+class TransactionReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Read-only API endpoint for viewing Transaction objects.
+    
+    Methods:
+    - list(request, *args, **kwargs): Retrieves a list of all transactions.
+    - retrieve(request, *args, **kwargs): Retrieves a transaction by its ID.
+    
+    Inputs:
+    - request: The HTTP request containing necessary data for the respective actions.
+    
+    Outputs:
+    - response: JSON response with the details of the transaction or a list of transactions.
+    
+    Permissions:
+    - AllowAny: No authentication required.
+    """
+    permission_classes = [AllowAny]
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    # filterset_fields = ['user_wallet', 'action', 'timestamp']
+    ordering_fields = ['timestamp', 'amount']
+    search_fields = ['user_wallet__wallet_id', 'action']
