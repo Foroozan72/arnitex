@@ -7,5 +7,6 @@ urlpatterns = [
     path('media-hub/', include('media_hub.urls')),
     path('support/', include('support.urls')),
     path('crypto-currency/', include('crypto_currency.urls')),
+    path('wallet/', include('wallet.urls')),
     path('', include(swagger_urlpatterns)),
 ]

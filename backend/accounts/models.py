@@ -3,6 +3,7 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from utils.models import TimeStamp, UUID
 from django.utils.translation import gettext_lazy as _
+from wallet.models import Wallet
 
 class UserManager(BaseUserManager):
     def create_user(self, email=None, phone_number=None, password=None):
@@ -14,6 +15,7 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         Profile.objects.create(user=user)
+        Wallet.objects.create(user=user)
         return user
 
     def create_superuser(self, email=None, phone_number=None, password=None):
