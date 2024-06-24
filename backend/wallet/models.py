@@ -4,8 +4,18 @@ from django.utils.translation import gettext_lazy as _
 from utils.enums import TransactionActionChoices
 
 class Wallet(TimeStamp, UUID):
+    wallet_id = models.CharField(max_length=100, verbose_name=_('Wallet id'), unique=True, blank=True)
     user = models.OneToOneField('accounts.User', on_delete=models.CASCADE, verbose_name=_('User'))
     balance = models.DecimalField(max_digits=20, decimal_places=8, default=0.0, verbose_name=_('Balance'))
+
+    def save(self, *args, **kwargs):
+        if not self.wallet_id:
+            self.wallet_id = self.generate_wallet_id()
+        super().save(*args, **kwargs)
+
+    @staticmethod
+    def generate_wallet_id():
+        return ''.join(random.choices('0123456789', k=15))
 
     class Meta:
         verbose_name, verbose_name_plural = _('Wallet'), _('Wallets')

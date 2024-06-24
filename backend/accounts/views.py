@@ -19,6 +19,22 @@ from . import serializers
 User = get_user_model()
         
 class DevLogin(CreateModelMixin, GenericViewSet):
+    """
+        API endpoint that allows users to log in using their phone number or email.
+        If the user is logging in for the first time, a new profile is created.
+        
+        Methods:
+        - create(request): Handles POST requests to log in a user and returns access and refresh tokens.
+        
+        Inputs:
+        - request: The HTTP request containing 'phone_number' or 'email' in POST data.
+        
+        Outputs:
+        - response: JSON response containing 'access_token' and 'refresh_token' cookies.
+        
+        Permissions:
+        - AllowAny: No authentication required.
+    """
     permission_classes = [AllowAny]
     
     def create(self, request):
@@ -47,6 +63,21 @@ class DevLogin(CreateModelMixin, GenericViewSet):
         return response
 
 class CheckEmail(CreateModelMixin, GenericViewSet):
+    """
+        API endpoint to check if an email is already registered.
+        
+        Methods:
+        - create(request, *args, **kwargs): Handles POST requests to check email existence and returns a boolean value.
+        
+        Inputs:
+        - request: The HTTP request containing 'email' in POST data.
+        
+        Outputs:
+        - response: JSON response containing a boolean field 'exists' indicating email existence.
+        
+        Permissions:
+        - AllowAny: No authentication required.
+    """
     permission_classes = [AllowAny]
     serializer_class = serializers.CheckEmailSerializer
 
@@ -59,6 +90,21 @@ class CheckEmail(CreateModelMixin, GenericViewSet):
         return Response({"exists": exists}, status=HTTP_200_OK)
 
 class CheckPhoneNumber(CreateModelMixin, GenericViewSet):
+    """
+        API endpoint to check if a phone number is already registered.
+        
+        Methods:
+        - create(request, *args, **kwargs): Handles POST requests to check phone number existence and returns a boolean value.
+        
+        Inputs:
+        - request: The HTTP request containing 'phone_number' in POST data.
+        
+        Outputs:
+        - response: JSON response containing a boolean field 'exists' indicating phone number existence.
+        
+        Permissions:
+        - AllowAny: No authentication required.
+    """
     permission_classes = [AllowAny]
     serializer_class = serializers.CheckPhoneNumberSerializer
 
@@ -72,6 +118,21 @@ class CheckPhoneNumber(CreateModelMixin, GenericViewSet):
 
 
 class SendOTP(CreateModelMixin, GenericViewSet):
+    """
+        API endpoint to send an OTP (One Time Password) for verification purposes.
+        
+        Methods:
+        - create(request, *args, **kwargs): Handles POST requests to send OTP and returns OTP data on success.
+        
+        Inputs:
+        - request: The HTTP request containing required data for sending OTP.
+        
+        Outputs:
+        - response: JSON response containing OTP data on success, or error details on failure.
+        
+        Permissions:
+        - AllowAny: No authentication required.
+    """
     permission_classes = [AllowAny]
     serializer_class = serializers.SendOTPSerializer
 
@@ -84,6 +145,21 @@ class SendOTP(CreateModelMixin, GenericViewSet):
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 class RegisterVerify(CreateModelMixin, GenericViewSet):
+    """
+        API endpoint to verify user registration using an OTP.
+        
+        Methods:
+        - create(request, *args, **kwargs): Handles POST requests to verify registration and returns registration data on success.
+        
+        Inputs:
+        - request: The HTTP request containing required data for registration verification.
+        
+        Outputs:
+        - response: JSON response containing registration data on success, or error details on failure.
+        
+        Permissions:
+        - AllowAny: No authentication required.
+    """
     permission_classes = [AllowAny]
     serializer_class = serializers.RegisterVerifySerializer
 
@@ -96,6 +172,21 @@ class RegisterVerify(CreateModelMixin, GenericViewSet):
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 class LoginVerify(CreateModelMixin, GenericViewSet):
+    """
+        API endpoint to verify user login using an OTP.
+        
+        Methods:
+        - create(request, *args, **kwargs): Handles POST requests to verify login and returns login data on success.
+        
+        Inputs:
+        - request: The HTTP request containing required data for login verification.
+        
+        Outputs:
+        - response: JSON response containing login data on success, or error details on failure.
+        
+        Permissions:
+        - AllowAny: No authentication required.
+    """
     permission_classes = [AllowAny]
     serializer_class = serializers.LoginVerifySerializer
 
@@ -108,6 +199,21 @@ class LoginVerify(CreateModelMixin, GenericViewSet):
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 class ForgetPasswordVerify(CreateModelMixin, GenericViewSet):
+    """
+        API endpoint to verify password reset using an OTP.
+        
+        Methods:
+        - create(request, *args, **kwargs): Handles POST requests to verify password reset and returns verification data on success.
+        
+        Inputs:
+        - request: The HTTP request containing required data for password reset verification.
+        
+        Outputs:
+        - response: JSON response containing verification data on success, or error details on failure.
+        
+        Permissions:
+        - AllowAny: No authentication required.
+    """
     permission_classes = [AllowAny]
     serializer_class = serializers.ForgetPasswordSerializer
 
@@ -120,6 +226,21 @@ class ForgetPasswordVerify(CreateModelMixin, GenericViewSet):
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 class ChangePassword(CreateModelMixin, GenericViewSet):
+    """
+        API endpoint to change a user's password.
+        
+        Methods:
+        - create(request, *args, **kwargs): Handles POST requests to change the password and returns a success message on completion.
+        
+        Inputs:
+        - request: The HTTP request containing required data for changing the password.
+        
+        Outputs:
+        - response: JSON response containing a success message on successful password change, or error details on failure.
+        
+        Permissions:
+        - IsAuthenticated: Requires user to be authenticated.
+    """
     serializer_class = serializers.ChangePasswordSerializer
 
     def create(self, request, *args, **kwargs):
@@ -131,6 +252,21 @@ class ChangePassword(CreateModelMixin, GenericViewSet):
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
 class LogoutViewSet(CreateModelMixin, GenericViewSet):
+    """
+        API endpoint to log out a user by invalidating their refresh token.
+        
+        Methods:
+        - create(request, *args, **kwargs): Handles POST requests to log out the user and returns a no content response on success.
+        
+        Inputs:
+        - request: The HTTP request containing required data for logging out.
+        
+        Outputs:
+        - response: HTTP 204 No Content response on successful logout, or error details on failure.
+        
+        Permissions:
+        - IsAuthenticated: Requires user to be authenticated.
+    """
     serializer_class = serializers.LogoutSerializer
 
     def create(self, request, *args, **kwargs):
@@ -142,6 +278,22 @@ class LogoutViewSet(CreateModelMixin, GenericViewSet):
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
         
 class UserProfileView(ListAPIView, UpdateAPIView):
+    """
+        API endpoint to retrieve and update user profile information.
+        
+        Methods:
+        - list(request, *args, **kwargs): Handles GET requests to retrieve the authenticated user's profile information.
+        - update(request, *args, **kwargs): Handles PUT/PATCH requests to update the authenticated user's profile information.
+        
+        Inputs:
+        - request: The HTTP request for retrieving or updating profile data.
+        
+        Outputs:
+        - response: JSON response containing profile data on successful retrieval or update, or error details on failure.
+        
+        Permissions:
+        - IsAuthenticated: Requires user to be authenticated.
+    """
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 

@@ -15,7 +15,7 @@ class CountrySerializer(serializers.ModelSerializer):
         model = Country
         fields = '__all__'
 
-class WalletSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Wallet
-        fields = '__all__'
+# class WalletSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Wallet
+#         fields = '__all__'
