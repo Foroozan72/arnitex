@@ -3,6 +3,10 @@ from utils.models import TimeStamp, UUID
 from django.utils.translation import gettext_lazy as _
 from utils.enums import TransactionActionChoices
 
+import random
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+
 class Wallet(TimeStamp, UUID):
     wallet_id = models.CharField(max_length=100, verbose_name=_('Wallet id'), unique=True, blank=True)
     user = models.OneToOneField('accounts.User', on_delete=models.CASCADE, verbose_name=_('User'))
@@ -10,18 +14,26 @@ class Wallet(TimeStamp, UUID):
 
     def save(self, *args, **kwargs):
         if not self.wallet_id:
-            self.wallet_id = self.generate_wallet_id()
+            self.wallet_id = self.generate_unique_wallet_id()
         super().save(*args, **kwargs)
 
     @staticmethod
     def generate_wallet_id():
         return ''.join(random.choices('0123456789', k=15))
 
+    def generate_unique_wallet_id(self):
+        wallet_id = self.generate_wallet_id()
+        while Wallet.objects.filter(wallet_id=wallet_id).exists():
+            wallet_id = self.generate_wallet_id()
+        return wallet_id
+
     class Meta:
-        verbose_name, verbose_name_plural = _('Wallet'), _('Wallets')
+        verbose_name = _('Wallet')
+        verbose_name_plural = _('Wallets')
 
     def __str__(self):
         return f'{self.user.phone_number} Wallet'
+
 
 class Transaction(UUID):
     user_wallet = models.ForeignKey(Wallet, on_delete=models.SET_NULL, null=True, verbose_name=_('User wallet'))

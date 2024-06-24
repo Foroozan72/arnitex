@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
-from .models import Country, City, Wallet
+from .models import Country, City
 from .serializers import CountrySerializer, CitySerializer
 from .permissions import IsSuperuser
 from .filters import CityFilter, CountryFilter
