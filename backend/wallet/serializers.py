@@ -66,3 +66,24 @@ class TransactionSerializer(serializers.ModelSerializer):
         instance.timestamp = validated_data.get('timestamp', instance.timestamp)
         instance.save()
         return instance
+
+
+class TransferSerializer(serializers.Serializer):
+    target_wallet_id = serializers.CharField()
+    amount = serializers.DecimalField(max_digits=20, decimal_places=8)
+
+    def validate(self, data):
+        source_wallet = self.context['source_wallet']
+        try:
+            target_wallet = Wallet.objects.get(wallet_id=data['target_wallet_id'])
+        except Wallet.DoesNotExist:
+            raise serializers.ValidationError("Target wallet does not exist")
+
+        if source_wallet.balance < data['amount']:
+            raise serializers.ValidationError("Insufficient balance in the source wallet")
+
+        if source_wallet == target_wallet:
+            raise serializers.ValidationError("Cannot transfer to the same wallet")
+
+        data['target_wallet'] = target_wallet
+        return data
