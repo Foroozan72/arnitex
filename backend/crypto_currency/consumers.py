@@ -29,13 +29,16 @@ class CryptoConsumer(AsyncWebsocketConsumer):
 
             coins = [
                 {
-                    "coin_id": coin_id,
-                    "current_price": details['usd'],
-                    "change_24h": details.get('usd_24h_change', 0),
-                    "volume_24h": details.get('usd_24h_vol', 0),
-                    "market_cap": details.get('usd_market_cap', 0)
+                    "coin_id": coin.coin_id,
+                    "name": coin.coin_name,
+                    "symbol": coin.coin_symbol,
+                    "logo": coin.coin_image,
+                    "current_price": data[coin.coin_id]['usd'],
+                    "change_24h": data[coin.coin_id].get('usd_24h_change', 0),
+                    "volume_24h": data[coin.coin_id].get('usd_24h_vol', 0),
+                    "market_cap": data[coin.coin_id].get('usd_market_cap', 0)
                 }
-                for coin_id, details in data.items()
+                for coin in self.supported_coins if coin.coin_id in data
             ]
             coins.sort(key=lambda x: x['market_cap'], reverse=True)
 

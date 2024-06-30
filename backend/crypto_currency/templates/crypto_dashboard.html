@@ -17,6 +17,9 @@
     <table id="crypto-table">
         <thead>
             <tr>
+                <th>Logo</th>
+                <th>Name</th>
+                <th>Symbol</th>
                 <th>Coin ID</th>
                 <th>Current Price</th>
                 <th>24h Change</th>
@@ -41,7 +44,6 @@
             connectWebSocket();
         });
 
-
         function connectWebSocket() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const url = `${protocol}//${window.location.host}/ws/crypto/${coinLimit === 'all' ? 10000 : coinLimit}/`;
@@ -55,11 +57,20 @@
 
                 for (const coin of coins) {
                     const row = tableBody.insertRow();
-                    row.insertCell(0).innerText = coin.coin_id;
-                    row.insertCell(1).innerText = coin.current_price;
-                    row.insertCell(2).innerText = coin.change_24h;
-                    row.insertCell(3).innerText = coin.volume_24h;
-                    row.insertCell(4).innerText = coin.market_cap;
+                    const logoCell = row.insertCell(0);
+                    const logoImg = document.createElement('img');
+                    logoImg.src = coin.logo;
+                    logoImg.alt = coin.name;
+                    logoImg.style.width = '32px'; // Adjust the size as needed
+                    logoCell.appendChild(logoImg);
+
+                    row.insertCell(1).innerText = coin.name;
+                    row.insertCell(2).innerText = coin.symbol;
+                    row.insertCell(3).innerText = coin.coin_id;
+                    row.insertCell(4).innerText = coin.current_price;
+                    row.insertCell(5).innerText = coin.change_24h;
+                    row.insertCell(6).innerText = coin.volume_24h;
+                    row.insertCell(7).innerText = coin.market_cap;
                 }
             };
         }
