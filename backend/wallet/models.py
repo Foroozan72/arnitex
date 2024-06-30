@@ -2,10 +2,7 @@ from django.db import models
 from utils.models import TimeStamp, UUID
 from django.utils.translation import gettext_lazy as _
 from utils.enums import TransactionActionChoices
-
 import random
-from django.db import models
-from django.utils.translation import gettext_lazy as _
 
 class Wallet(TimeStamp, UUID):
     wallet_id = models.CharField(max_length=100, verbose_name=_('Wallet id'), unique=True, blank=True)
@@ -33,7 +30,6 @@ class Wallet(TimeStamp, UUID):
 
     def __str__(self):
         return f'{self.user.phone_number} Wallet'
-
 
 class Transaction(UUID):
     user_wallet = models.ForeignKey(Wallet, on_delete=models.SET_NULL, null=True, verbose_name=_('User wallet'))

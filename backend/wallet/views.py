@@ -2,11 +2,13 @@ from rest_framework import viewsets, mixins , status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated , AllowAny
 from .models import Wallet ,Transaction
-from .serializers import WalletSerializer , TransactionSerializer
+from .serializers import WalletSerializer , TransferSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework.views import APIView
 from rest_framework.decorators import action
+from django.db import transaction
+from django.utils import timezone
 
 
 class CreateWalletViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -83,8 +85,8 @@ class TransactionReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     """
     permission_classes = [AllowAny]
     queryset = Transaction.objects.all()
-    serializer_class = TransactionSerializer
-    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    serializer_class = TransferSerializer
+    # filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     # filterset_fields = ['user_wallet', 'action', 'timestamp']
     ordering_fields = ['timestamp', 'amount']
     search_fields = ['user_wallet__wallet_id', 'action']
@@ -119,39 +121,13 @@ class WalletViewSetTransfer(viewsets.ModelViewSet):
         - transfer_balance: Transfer balance from one wallet to another.
     """
     queryset = Wallet.objects.all()
-    serializer_class = WalletSerializer
+    serializer_class = TransferSerializer
     permission_classes = [IsAuthenticated]
 
-    @action(detail=True, methods=['post'], url_path='transfer')
-    def transfer_balance(self, request, pk=None):
-        source_wallet = self.get_object()
-        serializer = TransferSerializer(data=request.data, context={'source_wallet': source_wallet})
-        serializer.is_valid(raise_exception=True)
-        target_wallet = serializer.validated_data['target_wallet']
-        amount = serializer.validated_data['amount']
+    # @action(detail=False, methods=['post'], url_path='transfer')
+    # def transfer_balance(self, request):
+    #     serializer = TransferSerializer(data=request.data, context={'request': request})
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
 
-        with transaction.atomic():
-            source_wallet.balance -= amount
-            source_wallet.save()
-            target_wallet.balance += amount
-            target_wallet.save()
-
-            Transaction.objects.create(
-                user_wallet=source_wallet,
-                action=TransactionActionChoices.INTERNAL_TRANSFER,
-                amount=-amount,
-                timestamp=timezone.now(),
-                sender=source_wallet.user,
-                receiver=target_wallet.user
-            )
-
-            Transaction.objects.create(
-                user_wallet=target_wallet,
-                action=TransactionActionChoices.INTERNAL_TRANSFER,
-                amount=amount,
-                timestamp=timezone.now(),
-                sender=source_wallet.user,
-                receiver=target_wallet.user
-            )
-
-        return Response({'detail': 'Transfer successful'}, status=status.HTTP_200_OK)
+    #     return Response({'detail': 'Transfer successful'}, status=status.HTTP_200_OK)
