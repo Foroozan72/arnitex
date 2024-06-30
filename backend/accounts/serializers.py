@@ -6,16 +6,10 @@ from .utils_jwt import get_tokens_for_user
 from .models import Profile
 User = get_user_model()
 
-
-class CheckEmailSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-
-class CheckPhoneNumberSerializer(serializers.Serializer):
-    phone_number = serializers.CharField(max_length=11)
-
 class SendOTPSerializer(serializers.Serializer):
     email = serializers.EmailField(required=False)
     phone_number = serializers.CharField(max_length=11, required=False)
+    position = serializers.CharField(max_length=11, required=False, default='login')
 
     def validate(self, attrs):
         if attrs.get('email') is None and attrs.get('phone_number') is None:
@@ -24,6 +18,18 @@ class SendOTPSerializer(serializers.Serializer):
         elif attrs.get('email') and attrs.get('phone_number'):
             raise serializers.ValidationError({"EN": "Please send only one between the email and phone number fields.", "FA": "لطفا فقط یکی از فیلد های تلفن یا ایمیل را وارد کنید"})
         
+        elif attrs.get('position') == 'login' and attrs.get('email') and not User.objects.filter(email=attrs.get('email')).exists():
+            raise serializers.ValidationError({"EN": "The email or password is incorrect.", "FA": "ایمیل یا پسورد اشتباه است"})
+        
+        elif attrs.get('position') == 'login' and attrs.get('phone_number') and not User.objects.filter(phone_number=attrs.get('phone_number')).exists():
+            raise serializers.ValidationError({"EN": "The phone number or password is incorrect.", "FA": "شماره تلفن یا پسورد اشتباه است"})
+        
+        elif attrs.get('position') == 'register' and attrs.get('email') and not User.objects.filter(email=attrs.get('email')).exists():
+            raise serializers.ValidationError({"EN": "There is not a email.", "FA": "ایمیل وجود ندارد"})
+        
+        elif attrs.get('position') == 'register' and attrs.get('phone_number') and not User.objects.filter(phone_number=attrs.get('phone_number')).exists():
+            raise serializers.ValidationError({"EN": "There is not a phone number.", "FA": "شماره تلفن وجود ندارد"})
+
         return attrs
 
     def save(self, **kwargs):

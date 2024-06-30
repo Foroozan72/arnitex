@@ -1,31 +1,33 @@
-# import json
-# from basic_info.models import CryptoCurrency
-
-# with open('basic_info/static_data/crypto_currency.json', 'r', encoding='utf-8') as f:
-#     data = json.load(f)
-#     for coin in data['coins']:
-#         obj, created = CryptoCurrency.objects.get_or_create(coin_id=coin['id'], coin_name=coin['name'],)
-
 import requests
 from basic_info.models import CryptoCurrency
+import os
 
-url = f"https://api.coingecko.com/api/v3/coins/markets"
-params = {
-    'vs_currency': 'usd',
-    'order': 'market_cap_desc',
-    'per_page': 250, 
-    'page': 1
-}
-response = requests.get(url, params=params)
-for i in response.json():
-    obj, created = CryptoCurrency.objects.get_or_create(coin_id=i['id'], coin_name=i['name'], coin_symbol=i['symbol'].upper(), coin_image=i['image'])
+CryptoCurrency.objects.all().delete()
+def get_top_500_cryptocurrencies(api_key):
+    url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
+    parameters = {
+        'start': '1',
+        'limit': '20',
+        'convert': 'USD'
+    }
+    headers = {
+        'Accepts': 'application/json',
+        'X-CMC_PRO_API_KEY': api_key,
+    }
 
-params = {
-    'vs_currency': 'usd',
-    'order': 'market_cap_desc',
-    'per_page': 250, 
-    'page': 2
-}
-response = requests.get(url, params=params)
-for i in response.json():
-    obj, created = CryptoCurrency.objects.get_or_create(coin_id=i['id'], coin_name=i['name'], coin_symbol=i['symbol'].upper(), coin_image=i['image'])
+    response = requests.get(url, headers=headers, params=parameters)
+    data = response.json()
+
+    crypto_list = []
+    for currency in data['data']:
+        CryptoCurrency.objects.get_or_create(
+            coin_id=currency['id'],
+            coin_name=currency['name'],
+            coin_symbol=currency['symbol'],
+            coin_image=f"https://s2.coinmarketcap.com/static/img/coins/64x64/{currency['id']}.png"
+        )
+
+    return crypto_list
+
+api_key = os.environ.get("CoinMarketCap_API_KEY")
+crypto_data = get_top_500_cryptocurrencies(api_key)

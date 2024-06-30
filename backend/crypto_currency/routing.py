@@ -1,7 +1,7 @@
 from django.urls import re_path, path
 
-from .consumers import CryptoConsumer
+from .consumers import CryptoTableConsumer
 
 websocket_urlpatterns = [
-    path("ws/crypto/<int:limit>/", CryptoConsumer.as_asgi()),
+    path("ws/crypto/table/<int:limit>/", CryptoTableConsumer.as_asgi()),
 ]

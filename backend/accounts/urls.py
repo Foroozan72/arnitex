@@ -8,8 +8,6 @@ from . import views
 app_name = 'accounts'
 router = DefaultRouter()
 router.register(r'dev-login', views.DevLogin, basename='dev-login')
-router.register(r'check-email', views.CheckEmail, basename='check-email')
-router.register(r'check-phone_number', views.CheckPhoneNumber, basename='check-phone_number')
 router.register(r'send-otp', views.SendOTP, basename='send-otp')
 router.register(r'register-verify', views.RegisterVerify, basename='register-verify')
 router.register(r'login-verify', views.LoginVerify, basename='login-verify')

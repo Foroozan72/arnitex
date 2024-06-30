@@ -4,6 +4,31 @@
 <html>
 <head>
     <title>Crypto Dashboard</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        img {
+            width: 32px;
+            height: 32px;
+        }
+        .crypto-row {
+            display: flex;
+            align-items: center;
+        }
+        .crypto-row img {
+            margin-right: 10px;
+        }
+    </style>
 </head>
 <body>
     <h1>Crypto Dashboard</h1>
@@ -17,19 +42,17 @@
     <table id="crypto-table">
         <thead>
             <tr>
-                <th>Logo</th>
-                <th>Name</th>
-                <th>Symbol</th>
-                <th>Coin ID</th>
-                <th>Current Price</th>
-                <th>24h Change</th>
-                <th>24h Volume</th>
-                <th>Market Cap</th>
+                <th>نام</th>
+                <th>آخرین قیمت (تومان)</th>
+                <th>24h تغییر</th>
+                <th>حجم معاملات 24h</th>
+                <th>نمودار هفتگی</th>
             </tr>
         </thead>
         <tbody>
         </tbody>
     </table>
+
     <script src="{% static 'reconnecting-websocket.js' %}"></script>
     <script>
         let coinLimit = 10; // Default limit
@@ -46,34 +69,39 @@
 
         function connectWebSocket() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const url = `${protocol}//${window.location.host}/ws/crypto/${coinLimit === 'all' ? 10000 : coinLimit}/`;
+            const url = `${protocol}//${window.location.host}/ws/crypto/table/${coinLimit === 'all' ? 10000 : coinLimit}/`;
             socket = new ReconnectingWebSocket(url);
 
             socket.onmessage = function(e) {
                 const coins = JSON.parse(e.data);
-                console.log(coins);
                 const tableBody = document.getElementById('crypto-table').getElementsByTagName('tbody')[0];
                 tableBody.innerHTML = '';
 
                 for (const coin of coins) {
                     const row = tableBody.insertRow();
-                    const logoCell = row.insertCell(0);
+
+                    const nameCell = row.insertCell(0);
+                    nameCell.className = "crypto-row";
                     const logoImg = document.createElement('img');
                     logoImg.src = coin.logo;
                     logoImg.alt = coin.name;
-                    logoImg.style.width = '32px'; // Adjust the size as needed
-                    logoCell.appendChild(logoImg);
+                    nameCell.appendChild(logoImg);
+                    const nameSpan = document.createElement('span');
+                    nameSpan.innerText = coin.name;
+                    nameCell.appendChild(nameSpan);
 
-                    row.insertCell(1).innerText = coin.name;
-                    row.insertCell(2).innerText = coin.symbol;
-                    row.insertCell(3).innerText = coin.coin_id;
-                    row.insertCell(4).innerText = coin.current_price;
-                    row.insertCell(5).innerText = coin.change_24h;
-                    row.insertCell(6).innerText = coin.volume_24h;
-                    row.insertCell(7).innerText = coin.market_cap;
+                    row.insertCell(1).innerText = `IRT ${coin.current_price.toLocaleString()}`;
+                    row.insertCell(2).innerText = `${coin.change_24h.toFixed(2)}%`;
+                    row.insertCell(3).innerText = coin.volume_24h.toLocaleString();
+
+                    const chartCell = row.insertCell(4);
+                    const chartImg = document.createElement('img');
+                    chartImg.src = `data:image/png;base64,${coin.chart_image}`;
+                    chartCell.appendChild(chartImg);
                 }
             };
         }
+
         connectWebSocket();
     </script>
 </body>

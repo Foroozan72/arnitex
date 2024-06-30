@@ -62,61 +62,6 @@ class DevLogin(CreateModelMixin, GenericViewSet):
         }
         return response
 
-class CheckEmail(CreateModelMixin, GenericViewSet):
-    """
-        API endpoint to check if an email is already registered.
-        
-        Methods:
-        - create(request, *args, **kwargs): Handles POST requests to check email existence and returns a boolean value.
-        
-        Inputs:
-        - request: The HTTP request containing 'email' in POST data.
-        
-        Outputs:
-        - response: JSON response containing a boolean field 'exists' indicating email existence.
-        
-        Permissions:
-        - AllowAny: No authentication required.
-    """
-    permission_classes = [AllowAny]
-    serializer_class = serializers.CheckEmailSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        email = serializer.validated_data['email']
-        exists = User.objects.filter(email=email).exists()
-        return Response({"exists": exists}, status=HTTP_200_OK)
-
-class CheckPhoneNumber(CreateModelMixin, GenericViewSet):
-    """
-        API endpoint to check if a phone number is already registered.
-        
-        Methods:
-        - create(request, *args, **kwargs): Handles POST requests to check phone number existence and returns a boolean value.
-        
-        Inputs:
-        - request: The HTTP request containing 'phone_number' in POST data.
-        
-        Outputs:
-        - response: JSON response containing a boolean field 'exists' indicating phone number existence.
-        
-        Permissions:
-        - AllowAny: No authentication required.
-    """
-    permission_classes = [AllowAny]
-    serializer_class = serializers.CheckPhoneNumberSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        phone_number = serializer.validated_data['phone_number']
-        exists = User.objects.filter(phone_number=phone_number).exists()
-        return Response({"exists": exists}, status=HTTP_200_OK)
-
-
 class SendOTP(CreateModelMixin, GenericViewSet):
     """
         API endpoint to send an OTP (One Time Password) for verification purposes.
