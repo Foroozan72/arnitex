@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crypto Chart Viewer</title>
+    <style>
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .chart {
+            margin: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Crypto Chart Viewer</h1>
+    <label for="coin-ids">Enter Coin IDs (comma-separated):</label>
+    <input type="text" id="coin-ids" />
+    <button onclick="fetchCharts()">Get Charts</button>
+
+    <div id="charts" class="chart-container"></div>
+
+    <script>
+        async function fetchCharts() {
+            const coinIds = document.getElementById('coin-ids').value.split(',').map(id => id.trim());
+            const response = await fetch('http://localhost:8000/api/v1/crypto-currency/crypto-charts/get_charts/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ coin_ids: coinIds })
+            });
+            const charts = await response.json();
+
+            const chartsContainer = document.getElementById('charts');
+            chartsContainer.innerHTML = '';  // Clear previous charts
+
+            for (const [coinId, chart] of Object.entries(charts)) {
+                const chartDiv = document.createElement('div');
+                chartDiv.className = 'chart';
+                const chartTitle = document.createElement('h3');
+                chartTitle.innerText = coinId;
+                const chartImg = document.createElement('img');
+                chartImg.alt = `${coinId} chart`;
+                chartImg.src = `data:image/png;base64,${chart}`;
+                chartDiv.appendChild(chartTitle);
+                chartDiv.appendChild(chartImg);
+                chartsContainer.appendChild(chartDiv);
+            }
+        }
+    </script>
+</body>
+</html>
