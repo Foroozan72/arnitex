@@ -49,11 +49,8 @@ THIRD_PARTY_APPS  = [
     'drf_yasg',
     'django_filters',
     'corsheaders',
-<<<<<<< HEAD
     'channels', 
-=======
     'captcha',
->>>>>>> master
 ]
 INSTALLED_APPS = [
     "daphne",
