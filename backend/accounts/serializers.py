@@ -4,8 +4,10 @@ from django.contrib.auth import get_user_model
 from .utils_otp import SendOtp, get_user_otp
 from .utils_jwt import get_tokens_for_user
 from .models import Profile
-User = get_user_model()
+from captcha.fields import CaptchaField  
+from django.conf import settings
 
+User = get_user_model()
 
 class CheckEmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -20,16 +22,13 @@ class SendOTPSerializer(serializers.Serializer):
     def validate(self, attrs):
         if attrs.get('email') is None and attrs.get('phone_number') is None:
             raise serializers.ValidationError("Sending one of the email and phone number fields is required.")
-    
         elif attrs.get('email') and attrs.get('phone_number'):
             raise serializers.ValidationError("Please send only one between the email and phone number fields.")
-        
         return attrs
 
     def save(self, **kwargs):
         if self.validated_data.get('phone_number'):
             SendOtp.send_otp_SMS(self.validated_data.get('phone_number'))
-
         else:
             SendOtp.send_otp_email(self.validated_data.get('email'))
         return self.validated_data
@@ -39,6 +38,7 @@ class RegisterVerifySerializer(serializers.Serializer):
     phone_number = serializers.CharField(max_length=11, required=False)
     password1 = serializers.CharField(max_length=20)
     password2 = serializers.CharField(max_length=20)
+    captcha = CaptchaField()  # Modified field
     otp = serializers.IntegerField(
         min_value=10000, max_value=99999, write_only=True, required=True
     )
@@ -48,29 +48,22 @@ class RegisterVerifySerializer(serializers.Serializer):
     def validate(self, attrs):
         if attrs.get('email') is None and attrs.get('phone_number') is None:
             raise serializers.ValidationError("Sending one of the email and phone number fields is required.")
-    
         elif attrs.get('email') and attrs.get('phone_number'):
             raise serializers.ValidationError("Please send only one between the email and phone number fields.")
-    
         elif attrs.get('password1') != attrs.get('password2'):
             raise serializers.ValidationError("The password is not the same.")
-        
         elif attrs.get('email'):
             if User.objects.filter(email=attrs.get('email')):
-                raise serializers.ValidationError("The email aleady exists.")
-            
-            elif get_user_otp(email=attrs["email"]) == None:
-                raise serializers.ValidationError("Your OTP has been expired")
-
+                raise serializers.ValidationError("The email already exists.")
+            elif get_user_otp(email=attrs["email"]) is None:
+                raise serializers.ValidationError("Your OTP has expired")
             elif get_user_otp(email=attrs["email"]) != attrs["otp"]:
                 raise serializers.ValidationError("Invalid OTP token")
         else:
             if User.objects.filter(phone_number=attrs.get('phone_number')):
-                raise serializers.ValidationError("The email aleady exists.")
-            
-            elif get_user_otp(phone_number=attrs["phone_number"]) == None:
-                raise serializers.ValidationError("Your OTP has been expired")
-
+                raise serializers.ValidationError("The phone number already exists.")
+            elif get_user_otp(phone_number=attrs["phone_number"]) is None:
+                raise serializers.ValidationError("Your OTP has expired")
             elif get_user_otp(phone_number=attrs["phone_number"]) != attrs["otp"]:
                 raise serializers.ValidationError("Invalid OTP token")
         return attrs
@@ -80,7 +73,6 @@ class RegisterVerifySerializer(serializers.Serializer):
             user = User.objects.create_user(
                 phone_number=self.validated_data.get('phone_number'), 
                 password=self.validated_data.get('password1'))
-            
         else:
             user = User.objects.create_user(
                 email=self.validated_data.get('email'), 
@@ -103,33 +95,25 @@ class LoginVerifySerializer(serializers.Serializer):
     def validate(self, attrs):
         if attrs.get('email') is None and attrs.get('phone_number') is None:
             raise serializers.ValidationError("Sending one of the email and phone number fields is required.")
-    
         elif attrs.get('email') and attrs.get('phone_number'):
             raise serializers.ValidationError("Please send only one between the email and phone number fields.")
-        
         elif attrs.get('email'):
             if not User.objects.filter(email=attrs.get('email')):
-                raise serializers.ValidationError("The email is not exists.")
-            
-            elif get_user_otp(email=attrs["email"]) == None:
-                raise serializers.ValidationError("Your OTP has been expired")
-
+                raise serializers.ValidationError("The email does not exist.")
+            elif get_user_otp(email=attrs["email"]) is None:
+                raise serializers.ValidationError("Your OTP has expired")
             elif get_user_otp(email=attrs["email"]) != attrs["otp"]:
                 raise serializers.ValidationError("Invalid OTP token")
-
             user = User.objects.get(email=attrs["email"])
             if not user.check_password(attrs['password']):
                 raise serializers.ValidationError("The password or email is incorrect")
         else:
             if not User.objects.filter(phone_number=attrs.get('phone_number')):
-                raise serializers.ValidationError("The phone number is not exists.")
-            
-            elif get_user_otp(phone_number=attrs["phone_number"]) == None:
-                raise serializers.ValidationError("Your OTP has been expired")
-
+                raise serializers.ValidationError("The phone number does not exist.")
+            elif get_user_otp(phone_number=attrs["phone_number"]) is None:
+                raise serializers.ValidationError("Your OTP has expired")
             elif get_user_otp(phone_number=attrs["phone_number"]) != attrs["otp"]:
                 raise serializers.ValidationError("Invalid OTP token")
-
             user = User.objects.get(phone_number=attrs["phone_number"])
             if not user.check_password(attrs['password']):
                 raise serializers.ValidationError("The password or phone number is incorrect")
@@ -139,11 +123,9 @@ class LoginVerifySerializer(serializers.Serializer):
         if self.validated_data.get('phone_number'):
             user = User.objects.get(
                 phone_number=self.validated_data.get('phone_number'))
-        
         else:
             user = User.objects.get(
                 email=self.validated_data.get('email'))
-            
         self.validated_data["access"] = get_tokens_for_user(user)['access']
         self.validated_data["refresh"] = get_tokens_for_user(user)['refresh']
         return self.validated_data
@@ -159,48 +141,37 @@ class ForgetPasswordSerializer(serializers.Serializer):
     def validate(self, attrs):
         if attrs.get('email') is None and attrs.get('phone_number') is None:
             raise serializers.ValidationError("Sending one of the email and phone number fields is required.")
-    
         elif attrs.get('email') and attrs.get('phone_number'):
             raise serializers.ValidationError("Please send only one between the email and phone number fields.")
-        
         elif attrs.get('email'):
             if not User.objects.filter(email=attrs.get('email')):
-                raise serializers.ValidationError("The email is not exists.")
-            
-            elif get_user_otp(email=attrs["email"]) == None:
-                raise serializers.ValidationError("Your OTP has been expired")
-
+                raise serializers.ValidationError("The email does not exist.")
+            elif get_user_otp(email=attrs["email"]) is None:
+                raise serializers.ValidationError("Your OTP has expired")
             elif get_user_otp(email=attrs["email"]) != attrs["otp"]:
                 raise serializers.ValidationError("Invalid OTP token")
-            
         else:
             if not User.objects.filter(phone_number=attrs.get('phone_number')):
-                raise serializers.ValidationError("The phone number is not exists.")
-            
-            elif get_user_otp(phone_number=attrs["phone_number"]) == None:
-                raise serializers.ValidationError("Your OTP has been expired")
-
+                raise serializers.ValidationError("The phone number does not exist.")
+            elif get_user_otp(phone_number=attrs["phone_number"]) is None:
+                raise serializers.ValidationError("Your OTP has expired")
             elif get_user_otp(phone_number=attrs["phone_number"]) != attrs["otp"]:
                 raise serializers.ValidationError("Invalid OTP token")
-            
         return attrs
 
     def save(self, **kwargs):
         if self.validated_data.get('phone_number'):
             user = User.objects.get(
                 phone_number=self.validated_data.get('phone_number'))
-        
         else:
             user = User.objects.get(
                 email=self.validated_data.get('email'))
-            
         user.set_password(self.validated_data.get('new_password'))
         user.save()
-            
         self.validated_data["access"] = get_tokens_for_user(user)['access']
         self.validated_data["refresh"] = get_tokens_for_user(user)['refresh']
         return self.validated_data
-    
+
 class ChangePasswordSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=20)
     new_password = serializers.CharField(max_length=20)
@@ -215,7 +186,6 @@ class ChangePasswordSerializer(serializers.Serializer):
         user = self.context['request'].user
         user.set_password(self.validated_data['new_password'])
         user.save()
-
         return self.validated_data
 
 class LogoutSerializer(serializers.Serializer):
@@ -226,7 +196,6 @@ class LogoutSerializer(serializers.Serializer):
             token = RefreshToken(attrs['refresh_token'])
         except Exception as e:
             raise serializers.ValidationError("Invalid token")
-
         return attrs
 
     def save(self, **kwargs):

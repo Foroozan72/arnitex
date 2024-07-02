@@ -47,6 +47,7 @@ THIRD_PARTY_APPS  = [
     'drf_yasg',
     'django_filters',
     'corsheaders',
+    'captcha',
 ]
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -201,3 +202,7 @@ LANGUAGES = [
     ('en', 'English'),
     ('fa', 'Persian'),
 ]
+
+#for captcha
+CLOUDFLARE_TURNSTILE_SITE_KEY =  os.environ.get('RECAPTCHA_PUBLIC_KEY')
+CLOUDFLARE_TURNSTILE_SECRET_KEY =  os.environ.get('RECAPTCHA_PRIVATE_KEY')
