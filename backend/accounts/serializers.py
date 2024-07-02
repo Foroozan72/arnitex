@@ -25,10 +25,10 @@ class SendOTPSerializer(serializers.Serializer):
             raise serializers.ValidationError({"EN": "The phone number or password is incorrect.", "FA": "شماره تلفن یا پسورد اشتباه است"})
         
         elif attrs.get('position') == 'register' and attrs.get('email') and User.objects.filter(email=attrs.get('email')).exists():
-            raise serializers.ValidationError({"EN": "There is not a email.", "FA": "ایمیل وجود ندارد"})
+            raise serializers.ValidationError({"EN": "There is a email.", "FA": "ایمیل وجود دارد"})
         
         elif attrs.get('position') == 'register' and attrs.get('phone_number') and User.objects.filter(phone_number=attrs.get('phone_number')).exists():
-            raise serializers.ValidationError({"EN": "There is not a phone number.", "FA": "شماره تلفن وجود ندارد"})
+            raise serializers.ValidationError({"EN": "There is a phone number.", "FA": "شماره تلفن وجود دارد"})
 
         return attrs
 
