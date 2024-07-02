@@ -1,3 +1,4 @@
+import requests
 from datetime import datetime
 from support.models import Ticket
 
@@ -14,3 +15,21 @@ class GenerateTrackingCode():
             created_at__day=datetime.now().day
         ).count() + 1
         return f"{GenerateTrackingCode.dictionary(model)}{today}{today_objects_count:04d}"
+
+
+def get_tether_price():
+    url = "https://api.nobitex.ir/market/stats"
+    payload = {
+        "srcCurrency": "usdt",
+        "dstCurrency": "rls"
+    }
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, json=payload, headers=headers)
+    data = response.json()
+    return {'buy': int(data['stats']['usdt-rls']['bestBuy']), 'sell': int(data['stats']['usdt-rls']['bestSell'])}
+
+
+

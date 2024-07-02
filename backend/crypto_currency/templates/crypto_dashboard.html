@@ -44,6 +44,8 @@
             <tr>
                 <th>نام</th>
                 <th>آخرین قیمت (تومان)</th>
+                <th>قیمت فروش (تومان)</th>
+                <th>قیمت خرید (تومان)</th>
                 <th>24h تغییر</th>
                 <th>حجم معاملات 24h</th>
                 <th>نمودار هفتگی</th>
@@ -91,10 +93,12 @@
                     nameCell.appendChild(nameSpan);
 
                     row.insertCell(1).innerText = `IRT ${coin.current_price.toLocaleString()}`;
-                    row.insertCell(2).innerText = `${coin.change_24h.toFixed(2)}%`;
-                    row.insertCell(3).innerText = coin.volume_24h.toLocaleString();
+                    row.insertCell(2).innerText = `IRT ${coin.sell_toman_price.toLocaleString()}`;
+                    row.insertCell(3).innerText = `IRT ${coin.buy_toman_price.toLocaleString()}`;
+                    row.insertCell(4).innerText = `${coin.change_24h.toFixed(2)}%`;
+                    row.insertCell(5).innerText = coin.volume_24h.toLocaleString();
 
-                    const chartCell = row.insertCell(4);
+                    const chartCell = row.insertCell(6);
                     const chartImg = document.createElement('img');
                     chartImg.src = `data:image/png;base64,${coin.chart_image}`;
                     chartCell.appendChild(chartImg);

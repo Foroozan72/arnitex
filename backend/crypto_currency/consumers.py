@@ -172,6 +172,7 @@ from PIL import Image
 import base64
 import datetime
 import numpy as np
+from utils.classes import get_tether_price
 
 class CryptoTableConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -195,6 +196,7 @@ class CryptoTableConsumer(AsyncWebsocketConsumer):
                 convert='USD'
             )
             data = response.data
+            tether_price = get_tether_price()
 
             coins = [
                 {
@@ -203,6 +205,8 @@ class CryptoTableConsumer(AsyncWebsocketConsumer):
                     "symbol": coin.coin_symbol,
                     "logo": coin.coin_image,
                     "current_price": data[coin.coin_id]['quote']['USD']['price'],
+                    "sell_toman_price" : data[coin.coin_id]['quote']['USD']['price'] * tether_price['sell'],
+                    "buy_toman_price" : data[coin.coin_id]['quote']['USD']['price'] * tether_price['buy'],
                     "change_24h": data[coin.coin_id]['quote']['USD'].get('percent_change_24h', 0),
                     "volume_24h": data[coin.coin_id]['quote']['USD'].get('volume_24h', 0),
                     "market_cap": data[coin.coin_id]['quote']['USD'].get('market_cap', 0)
