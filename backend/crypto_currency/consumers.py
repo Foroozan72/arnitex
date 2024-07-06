@@ -173,6 +173,7 @@ import base64
 import datetime
 import numpy as np
 from utils.classes import get_tether_price
+from datetime import datetime
 
 class CryptoTableConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -218,4 +219,5 @@ class CryptoTableConsumer(AsyncWebsocketConsumer):
             limited_coins = coins[:self.limit]
 
             await self.send(text_data=json.dumps(limited_coins))
-            await asyncio.sleep(15)
+            print('--', datetime.now())
+            await asyncio.sleep(4)
