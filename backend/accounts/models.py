@@ -47,9 +47,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         return f"{self.email} - {self.phone_number}"
 
 class Profile(TimeStamp, UUID):
-    user = models.OneToOneField(User , on_delete = models.CASCADE ,  related_name='profile', verbose_name=_('User'))
-    first_name = models.CharField(max_length=50, verbose_name=_('First_name'))
-    last_name = models.CharField(max_length=50, verbose_name=_('Last_name'))
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', verbose_name=_('User'))
+    first_name = models.CharField(max_length=50, null=True, blank=True, verbose_name=_('First_name'))
+    last_name = models.CharField(max_length=50, null=True, blank=True, verbose_name=_('Last_name'))
     date_of_birth = models.DateField(null=True, blank=True, verbose_name=_('Date_of_birth'))
     address = models.CharField(max_length=255, null=True, blank=True, verbose_name=_('Address'))
     city = models.CharField(max_length=50, null=True, blank=True, verbose_name=_('City'))

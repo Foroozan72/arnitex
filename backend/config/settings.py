@@ -72,6 +72,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'utils.middleware.LanguageMiddleware',
 ]
 
 
@@ -216,4 +217,8 @@ USE_I18N = True
 LANGUAGES = [
     ('en', 'English'),
     ('fa', 'Persian'),
+]
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
 ]

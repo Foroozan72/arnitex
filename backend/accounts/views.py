@@ -2,21 +2,22 @@ from rest_framework.permissions import AllowAny , IsAuthenticated
 from rest_framework.mixins import CreateModelMixin 
 from rest_framework.viewsets import GenericViewSet
 from rest_framework import viewsets , status
-from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_204_NO_CONTENT
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import get_user_model
 from rest_framework.generics import ListAPIView, UpdateAPIView
 
-from .models import Profile
-from .serializers import ProfileSerializer
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
+from django.utils.translation import gettext as _
+from django.utils import translation
 
-
-from .utils_jwt import get_tokens_for_user
 from .models import Profile
 from . import serializers
+from .utils_jwt import get_tokens_for_user
+from utils.response import APIResponse
 User = get_user_model()
+
         
 class DevLogin(CreateModelMixin, GenericViewSet):
     """
@@ -46,7 +47,7 @@ class DevLogin(CreateModelMixin, GenericViewSet):
             user, created = User.objects.get_or_create(email=request.POST.get('email'))
         
         else:
-            return Response('phone_number or email field is required.')
+            return Response(_('The phone_number or email field is required.'))
 
         if created:
             Profile.objects.create(user=user)
@@ -85,9 +86,7 @@ class SendOTP(CreateModelMixin, GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(serializer.data, status=HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+            return APIResponse(msg=_('One-time password sent successfully.'), data=serializer.data)
 
 class RegisterVerify(CreateModelMixin, GenericViewSet):
     """
@@ -112,9 +111,7 @@ class RegisterVerify(CreateModelMixin, GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(serializer.data, status=HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+            return APIResponse(msg=_('Registration was done successfully.'), data=serializer.data, status=HTTP_201_CREATED)
 
 class LoginVerify(CreateModelMixin, GenericViewSet):
     """
@@ -139,9 +136,7 @@ class LoginVerify(CreateModelMixin, GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(serializer.data, status=HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+            return APIResponse(msg=_('You are successfully logged in.'), data=serializer.data)
 
 class ForgetPasswordVerify(CreateModelMixin, GenericViewSet):
     """
@@ -166,9 +161,7 @@ class ForgetPasswordVerify(CreateModelMixin, GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(serializer.data, status=HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+            return APIResponse(msg=_('The password was changed successfully.'), data=serializer.data)
 
 class ChangePassword(CreateModelMixin, GenericViewSet):
     """
@@ -192,9 +185,7 @@ class ChangePassword(CreateModelMixin, GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response("The password was changed successfully.", status=HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+            return APIResponse(msg=_('The password was changed successfully.'), data=serializer.data)
 
 class LogoutViewSet(CreateModelMixin, GenericViewSet):
     """
@@ -218,9 +209,7 @@ class LogoutViewSet(CreateModelMixin, GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(status=HTTP_204_NO_CONTENT)
-        else:
-            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+            return APIResponse(msg=_('Logout was successful.'), data=serializer.data, status=HTTP_204_NO_CONTENT)
         
 class UserProfileView(ListAPIView, UpdateAPIView):
     """
@@ -239,18 +228,17 @@ class UserProfileView(ListAPIView, UpdateAPIView):
         Permissions:
         - IsAuthenticated: Requires user to be authenticated.
     """
-    serializer_class = ProfileSerializer
+    serializer_class = serializers.ProfileSerializer
     permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
         instance = self.request.user.profile
         serializer = self.get_serializer(instance)
-        return Response(serializer.retrieve(instance), status=status.HTTP_200_OK)
+        return APIResponse(data=serializer.data, status=HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
         instance = self.request.user.profile
         serializer = self.get_serializer(instance, data=request.data)
         if serializer.is_valid():
             serializer.update(instance, serializer.validated_data)
-            return Response(serializer.retrieve(instance), status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return APIResponse(msg=_('The profile was updated successfully.'), data=serializer.retrieve(instance), status=HTTP_200_OK)
