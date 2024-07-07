@@ -1,9 +1,12 @@
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from basic_info.models import CryptoCurrency
-from . import serializers
 from django.shortcuts import render
+from django.utils.translation import gettext as _
+
+from basic_info.models import CryptoCurrency
+from utils.response import APIResponseMixin
+from . import serializers
 
 
 class ListCryptoCurrensy(viewsets.ReadOnlyModelViewSet):
@@ -22,7 +25,7 @@ class ListCryptoCurrensy(viewsets.ReadOnlyModelViewSet):
     queryset = CryptoCurrency.objects.filter(is_active=True).order_by('created_at')
 
 
-class SwapCryptoCurrensy(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class SwapCryptoCurrensy(APIResponseMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
     API endpoint to handle the swapping of cryptocurrencies.
 
@@ -35,8 +38,14 @@ class SwapCryptoCurrensy(mixins.CreateModelMixin, viewsets.GenericViewSet):
     permission_classes = [AllowAny]
     serializer_class = serializers.SwapCryptoCurrensySerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return self.api_response(data=serializer.data)
 
-class SwapDollarCryptoCurrensy(mixins.CreateModelMixin, viewsets.GenericViewSet):
+
+class SwapDollarCryptoCurrensy(APIResponseMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
     API endpoint to handle the swapping of dollars to cryptocurrencies.
 
@@ -48,6 +57,12 @@ class SwapDollarCryptoCurrensy(mixins.CreateModelMixin, viewsets.GenericViewSet)
     """
     permission_classes = [AllowAny]
     serializer_class = serializers.SwapDollarCryptoCurrensySerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return self.api_response(data=serializer.data)
 
 
 def crypto_dashboard(request):

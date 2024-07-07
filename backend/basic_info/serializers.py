@@ -6,14 +6,17 @@ class CitySerializer(serializers.ModelSerializer):
     class Meta:
         model = City
         fields = '__all__'
-
+        extra_kwargs = {
+            'is_show': {'default': True},
+        }
 
 class CountrySerializer(serializers.ModelSerializer):
-    # cities = CitySerializer(read_only=True, many=True)
-
     class Meta:
         model = Country
         fields = '__all__'
+        extra_kwargs = {
+            'is_show': {'default': True},
+        }
 
 # class WalletSerializer(serializers.ModelSerializer):
 #     class Meta:

@@ -5,8 +5,9 @@ from io import BytesIO
 
 from .models import Image
 from .serializers import ImageSerializer
+from utils.response import APIResponseMixin
 
-class ImageViewSet(mixins.ListModelMixin,
+class ImageViewSet(APIResponseMixin, mixins.ListModelMixin,
                    mixins.CreateModelMixin,
                    mixins.RetrieveModelMixin,
                    mixins.DestroyModelMixin,
@@ -15,6 +16,12 @@ class ImageViewSet(mixins.ListModelMixin,
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return self.api_response(data=serializer.data)
 
     def perform_create(self, serializer):
         image_instance = serializer.save()

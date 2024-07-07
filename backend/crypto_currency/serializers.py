@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from pycoingecko import CoinGeckoAPI
 from basic_info.models import CryptoCurrency
+from utils.response import CustomValidationError
+from django.utils.translation import gettext as _
 
 class ListCryptoCurrensySerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,6 +16,10 @@ class SwapCryptoCurrensySerializer(serializers.Serializer):
     number_of_coin2 = serializers.FloatField(read_only=True)
 
     def validate(self, attrs):
+        cg = CoinGeckoAPI()
+        if cg.get_price(ids=attrs['coin1'], vs_currencies='usd') == {} or cg.get_price(ids=attrs['coin2'], vs_currencies='usd') == {}:
+            raise CustomValidationError(_('No currency was found with this information.'))
+
         return attrs
 
     def save(self, **kwargs):
@@ -33,10 +39,10 @@ class SwapDollarCryptoCurrensySerializer(serializers.Serializer):
 
     def validate(self, attrs):
         if attrs['number_of_coin'] == 0 and attrs['dollar'] == 0:
-            raise serializers.ValidationError({'EN': "Please provide either the 'number_of_coin' or 'dollar' field in your request", "FA": "لطفاً یکی از فیلدهای 'number_of_coin' یا 'dollar' را وارد کنید"})
+            raise CustomValidationError(_('Please submit the number_of_coin or dollar field.'))
 
         elif attrs['number_of_coin'] != 0 and attrs['dollar'] != 0:
-            raise serializers.ValidationError({'EN':"Please send only one between the number_of_coin and dollar fields." , "FA": "لطفاً تنها یکی از فیلدهای 'number_of_coin' یا 'dollar' را در درخواست خود ارسال کنید."})
+            raise CustomValidationError(_('Please submit only one item between the number_of_coin and dollar fields.'))
 
         return attrs
 

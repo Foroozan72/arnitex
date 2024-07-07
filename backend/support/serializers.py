@@ -1,12 +1,14 @@
 from rest_framework import serializers
+from django.utils.translation import gettext as _
 from .models import TicketUnit, Ticket, TicketContent
 from utils.classes import GenerateTrackingCode
 from utils.enums import TicketStatusChoices
+from utils.response import CustomValidationError
 
 class TicketUnitSerializer(serializers.ModelSerializer):
     class Meta:
         model = TicketUnit
-        fields = ['title', 'is_show', 'updated_at', 'created_at']
+        fields = ['id', 'title', 'is_show', 'updated_at', 'created_at']
         extra_kwargs = {
             'is_show': {'default': True},
         }
@@ -38,8 +40,8 @@ class TicketSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs["status"] != TicketStatusChoices.WITHDRAW:
-            raise serializers.ValidationError(
-                f"The status value entered is not correct. The value of the status can only be {TicketStatusChoices.WITHDRAW}")
+            raise CustomValidationError(_(
+                f"The status value entered is not correct. The value of the status can only be {TicketStatusChoices.WITHDRAW}"))
         return attrs
     
     def save(self, **kwargs):

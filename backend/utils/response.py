@@ -2,12 +2,16 @@ from rest_framework.status import HTTP_200_OK
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
 from rest_framework.exceptions import ValidationError
+from rest_framework.pagination import PageNumberPagination
+
 
 def APIResponse(msg=None, data=None, status=None):
     response = Response()
     response.data = {
         'messages': {'message': msg},
-        'data': data if data else None
+        'data': {
+            'results': data
+        }
     }
     response.status_code = status if status else HTTP_200_OK
     return response
@@ -34,10 +38,30 @@ def custom_exception_handler(exc, context):
 
     return response
 
-
 class CustomValidationError(ValidationError):
     def __init__(self, detail, code=None):
         if isinstance(detail, (list, dict)):
             detail = detail[0] if isinstance(detail, list) else list(detail.values())[0][0]
         self.detail = {"message": detail}
         super().__init__(self.detail, code=code)
+
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
+
+class CustomPagination(PageNumberPagination):
+    page_size = 10  # تعداد آیتم‌های نمایش داده شده در هر صفحه
+
+    def get_paginated_response(self, data):
+        return Response({
+            'message': None,
+            'data': {
+                'count': self.page.paginator.count,
+                'page_size': self.page_size,
+                'current_page': self.page.number,
+                'total_pages': self.page.paginator.num_pages,
+                'current_page_size': len(data),
+                'next': self.get_next_link(),
+                'previous': self.get_previous_link(),
+                'results': data
+            }
+        })
