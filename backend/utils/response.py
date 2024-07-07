@@ -39,5 +39,5 @@ class CustomValidationError(ValidationError):
     def __init__(self, detail, code=None):
         if isinstance(detail, (list, dict)):
             detail = detail[0] if isinstance(detail, list) else list(detail.values())[0][0]
-        self.detail = {"messages": detail}
+        self.detail = {"message": detail}
         super().__init__(self.detail, code=code)
