@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-07 14:27+0330\n"
+"POT-Creation-Date: 2024-07-07 14:47+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-
 #: accounts/models.py:31
 msgid "Email"
 msgstr ""
@@ -100,7 +99,7 @@ msgstr "لطفا فقط یک مورد را بین فیلدهای ایمیل و �
 #: accounts/serializers.py:24 accounts/serializers.py:118
 #: accounts/serializers.py:173
 msgid "The email is not exists."
-msgstr ""
+msgstr "ایمیل وجود ندارد."
 
 #: accounts/serializers.py:27 accounts/serializers.py:131
 #: accounts/serializers.py:183
@@ -137,7 +136,7 @@ msgstr "رمز یکبار مصرف نامعتبر است."
 
 #: accounts/serializers.py:76
 msgid "The phone number aleady exists."
-msgstr ""
+msgstr "شماره تلفن قبلاً وجود دارد."
 
 #: accounts/serializers.py:128
 msgid "The password or email is incorrect."
@@ -354,9 +353,3 @@ msgstr ""
 #: wallet/models.py:45
 msgid "Transactions"
 msgstr ""
-
-#~ msgid "The email or password is incorrect."
-#~ msgstr "ایمیل یا رمز عبور نادرست است."
-
-#~ msgid "The phone number or password is incorrect."
-#~ msgstr "شماره تلفن یا رمز عبور نادرست است."
