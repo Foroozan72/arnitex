@@ -6,7 +6,7 @@ class LanguageMiddleware:
 
     def __call__(self, request):
         # زبان را از هدرهای درخواست دریافت کنید
-        user_language = request.headers.get('lang', 'en')
+        user_language = request.headers.get('Accept-Language', 'en')
         translation.activate(user_language)
         request.LANGUAGE_CODE = user_language
 
