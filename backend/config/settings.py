@@ -199,6 +199,7 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'utils.response.custom_exception_handler', 
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),

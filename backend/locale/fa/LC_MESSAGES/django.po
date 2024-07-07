@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-06 13:02+0330\n"
+"POT-Creation-Date: 2024-07-07 09:56+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-
 #: accounts/models.py:31
 msgid "Email"
 msgstr ""
@@ -90,48 +89,48 @@ msgstr ""
 #: accounts/serializers.py:18 accounts/serializers.py:57
 #: accounts/serializers.py:111 accounts/serializers.py:166
 msgid "Sending one of the email and phone number fields is required."
-msgstr "هیصشیصشیصش یصش یصش ص"
+msgstr "ارسال یکی از فیلدهای ایمیل و شماره تلفن الزامی است."
 
 #: accounts/serializers.py:21 accounts/serializers.py:60
 #: accounts/serializers.py:114 accounts/serializers.py:169
 msgid "Please submit only one item between the email and phone number fields."
-msgstr ""
+msgstr "لطفا فقط یک مورد را بین فیلدهای ایمیل و شماره تلفن ارسال کنید."
 
 #: accounts/serializers.py:24
 msgid "The email or password is incorrect."
-msgstr ""
+msgstr "ایمیل یا رمز عبور نادرست است."
 
 #: accounts/serializers.py:27
 msgid "The phone number or password is incorrect."
-msgstr ""
+msgstr "شماره تلفن یا رمز عبور نادرست است."
 
 #: accounts/serializers.py:30
 msgid "This email exists."
-msgstr ""
+msgstr "این ایمیل وجود دارد."
 
 #: accounts/serializers.py:33
 msgid "This phone number exists."
-msgstr ""
+msgstr "این شماره تلفن وجود دارد."
 
 #: accounts/serializers.py:63
 msgid "The password is not the same."
-msgstr ""
+msgstr "رمز یکسان نیست."
 
 #: accounts/serializers.py:67
 msgid "The email aleady exists."
-msgstr ""
+msgstr "ایمیل قبلاً وجود دارد."
 
 #: accounts/serializers.py:70 accounts/serializers.py:79
 #: accounts/serializers.py:121 accounts/serializers.py:134
 #: accounts/serializers.py:176 accounts/serializers.py:186
 msgid "Your OTP has been expired."
-msgstr ""
+msgstr "رمز یکبار مصرف شما منقضی شده است."
 
 #: accounts/serializers.py:73 accounts/serializers.py:82
 #: accounts/serializers.py:124 accounts/serializers.py:137
 #: accounts/serializers.py:179 accounts/serializers.py:189
 msgid "Invalid OTP."
-msgstr ""
+msgstr "رمز یکبار مصرف نامعتبر است."
 
 #: accounts/serializers.py:76
 msgid "The phone number aleady exists."
@@ -143,35 +142,51 @@ msgstr ""
 
 #: accounts/serializers.py:128
 msgid "The password or email is incorrect."
-msgstr ""
+msgstr "رمز عبور یا ایمیل نادرست است."
 
 #: accounts/serializers.py:131 accounts/serializers.py:183
 msgid "The phone number is not exists."
-msgstr ""
+msgstr "شماره تلفن وجود ندارد."
 
 #: accounts/serializers.py:141
 msgid "The password or phone number is incorrect."
-msgstr ""
+msgstr "رمز عبور یا شماره تلفن نادرست است."
 
 #: accounts/serializers.py:216
 msgid "The password is incorrect."
-msgstr ""
+msgstr "رمز عبور نادرست است."
 
 #: accounts/serializers.py:233
 msgid "Invalid token."
-msgstr ""
+msgstr "نشانه نامعتبر است."
 
 #: accounts/views.py:50
 msgid "The phone_number or email field is required."
-msgstr ""
+msgstr "فیلد شماره تلفن یا ایمیل اجباری است."
 
 #: accounts/views.py:89
 msgid "One-time password sent successfully."
-msgstr ""
+msgstr "رمز یکبار مصرف با موفقیت ارسال شد."
 
-#: accounts/views.py:194
+#: accounts/views.py:114
+msgid "Registration was done successfully."
+msgstr "ثبت نام با موفقیت انجام شد."
+
+#: accounts/views.py:139
+msgid "You are successfully logged in."
+msgstr "شما با موفقیت وارد شدید."
+
+#: accounts/views.py:164 accounts/views.py:188
 msgid "The password was changed successfully."
-msgstr ""
+msgstr "رمز عبور با موفقیت تغییر کرد."
+
+#: accounts/views.py:212
+msgid "Logout was successful."
+msgstr "خروج با موفقیت انجام شد."
+
+#: accounts/views.py:244
+msgid "The profile was updated successfully."
+msgstr "نمایه با موفقیت به روز شد."
 
 #: basic_info/models.py:7 basic_info/models.py:16 support/models.py:10
 msgid "Title"
@@ -344,6 +359,3 @@ msgstr ""
 #: wallet/models.py:45
 msgid "Transactions"
 msgstr ""
-
-#~ msgid "Hello, this is a response"
-#~ msgstr "سلام سلامممممم همگی سلام"
