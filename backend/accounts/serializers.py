@@ -21,10 +21,10 @@ class SendOTPSerializer(serializers.Serializer):
             raise CustomValidationError(_('Please submit only one item between the email and phone number fields.'))
 
         elif attrs.get('position') == 'login' and attrs.get('email') and not User.objects.filter(email=attrs.get('email')).exists():
-            raise CustomValidationError(_('The email or password is incorrect.'))
+            raise CustomValidationError(_('The email is not exists.'))
 
         elif attrs.get('position') == 'login' and attrs.get('phone_number') and not User.objects.filter(phone_number=attrs.get('phone_number')).exists():
-            raise CustomValidationError(_('The phone number or password is incorrect.'))
+            raise CustomValidationError(_('The phone number is not exists.'))
 
         elif attrs.get('position') == 'register' and attrs.get('email') and User.objects.filter(email=attrs.get('email')).exists():
             raise CustomValidationError(_('This email exists.'))
