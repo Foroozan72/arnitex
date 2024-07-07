@@ -190,34 +190,39 @@ class CryptoTableConsumer(AsyncWebsocketConsumer):
 
     async def send_crypto_data(self):
         while True:
-            ids = ','.join(self.coin_ids)
-            
-            response = await sync_to_async(self.cmc.cryptocurrency_quotes_latest)(
-                id=ids,
-                convert='USD'
-            )
-            data = response.data
-            tether_price = get_tether_price()
+            try:
+                ids = ','.join(self.coin_ids)
+                
+                response = await sync_to_async(self.cmc.cryptocurrency_quotes_latest)(
+                    id=ids,
+                    convert='USD'
+                )
+                data = response.data
+                tether_price = get_tether_price()
 
-            coins = [
-                {
-                    "coin_id": coin.coin_id,
-                    "name": coin.coin_name,
-                    "symbol": coin.coin_symbol,
-                    "logo": coin.coin_image,
-                    "current_price": data[coin.coin_id]['quote']['USD']['price'],
-                    "sell_toman_price" : data[coin.coin_id]['quote']['USD']['price'] * tether_price['sell'],
-                    "buy_toman_price" : data[coin.coin_id]['quote']['USD']['price'] * tether_price['buy'],
-                    "change_24h": data[coin.coin_id]['quote']['USD'].get('percent_change_24h', 0),
-                    "volume_24h": data[coin.coin_id]['quote']['USD'].get('volume_24h', 0),
-                    "market_cap": data[coin.coin_id]['quote']['USD'].get('market_cap', 0)
-                }
-                for coin in self.supported_coins if coin.coin_id in data
-            ]
-            coins.sort(key=lambda x: x['market_cap'], reverse=True)
+                coins = [
+                    {
+                        "coin_id": coin.coin_id,
+                        "name": coin.coin_name,
+                        "symbol": coin.coin_symbol,
+                        "logo": coin.coin_image,
+                        "current_price": data[coin.coin_id]['quote']['USD']['price'],
+                        "sell_toman_price" : data[coin.coin_id]['quote']['USD']['price'] * tether_price['sell'],
+                        "buy_toman_price" : data[coin.coin_id]['quote']['USD']['price'] * tether_price['buy'],
+                        "change_24h": data[coin.coin_id]['quote']['USD'].get('percent_change_24h', 0),
+                        "volume_24h": data[coin.coin_id]['quote']['USD'].get('volume_24h', 0),
+                        "market_cap": data[coin.coin_id]['quote']['USD'].get('market_cap', 0)
+                    }
+                    for coin in self.supported_coins if coin.coin_id in data
+                ]
+                coins.sort(key=lambda x: x['market_cap'], reverse=True)
 
-            limited_coins = coins[:self.limit]
+                limited_coins = coins[:self.limit]
 
-            await self.send(text_data=json.dumps(limited_coins))
-            print('--', datetime.now())
-            await asyncio.sleep(4)
+                await self.send(text_data=json.dumps(limited_coins))
+                print('--', datetime.now())
+                await asyncio.sleep(4)
+            except:
+                await self.send(text_data="dwadwadwa")
+                await asyncio.sleep(4)
+
