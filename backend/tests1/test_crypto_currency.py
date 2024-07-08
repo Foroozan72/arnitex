@@ -2,6 +2,7 @@ from rest_framework.test import APITestCase, APIClient
 from django.urls import reverse
 from rest_framework import status
 from basic_info.models import CryptoCurrency
+from unittest.mock import patch
 
 
 

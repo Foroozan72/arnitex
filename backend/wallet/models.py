@@ -25,6 +25,7 @@ class Wallet(TimeStamp, UUID):
         return wallet_id
 
     class Meta:
+
         verbose_name = _('Wallet')
         verbose_name_plural = _('Wallets')
 

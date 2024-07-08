@@ -1,47 +1,54 @@
-from rest_framework.test import APITestCase
-from .models import Country, City
-from .serializers import CountrySerializer, CitySerializer
+from django.urls import reverse
+from rest_framework.test import APIClient, APITestCase
+from rest_framework import status
+from basic_info.models import Country
+from django.contrib.auth import get_user_model
 
-class SerializerTests(APITestCase):
+User = get_user_model()
 
+class TestCountryViewSet(APITestCase):
     def setUp(self):
-        self.country = Country.objects.create(title="Test Country", flag="test_flag.png", is_show=True)
-        self.city = City.objects.create(title="Test City", is_show=True, country=self.country)
+        self.client = APIClient()
+        self.superuser = User.objects.create_superuser('admin', 'admin@test.com', 'password')
+        self.client.force_authenticate(user=self.superuser)
+        self.country_url = reverse('basic_info:country-list')
+        self.country_detail_url = lambda pk: reverse('basic_info:country-detail', kwargs={'pk': pk})
 
-        self.country_serializer = CountrySerializer(instance=self.country)
-        self.city_serializer = CitySerializer(instance=self.city)
+    def test_create_country(self):
+        data = {'title': 'Test Country', 'flag': 'test_flag.png', 'is_show': True}
+        response = self.client.post(self.country_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['title'], 'Test Country')
 
-    def test_city_serializer(self):
-        data = self.city_serializer.data
-        self.assertEqual(set(data.keys()), set(['id', 'title', 'is_show', 'country']))
-        self.assertEqual(data['title'], 'Test City')
-        self.assertEqual(data['is_show'], True)
-        self.assertEqual(data['country'], self.country.id)
+    def test_list_countries(self):
+        Country.objects.create(title='Country 1', flag='flag1.png', is_show=True)
+        Country.objects.create(title='Country 2', flag='flag2.png', is_show=True)
+        response = self.client.get(self.country_url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
 
-    def test_country_serializer(self):
-        data = self.country_serializer.data
-        self.assertEqual(set(data.keys()), set(['id', 'title', 'flag', 'is_show', 'cities']))
-        self.assertEqual(data['title'], 'Test Country')
-        self.assertEqual(data['flag'], 'test_flag.png')
-        self.assertEqual(data['is_show'], True)
-        self.assertEqual(len(data['cities']), 1)
-        self.assertEqual(data['cities'][0]['title'], 'Test City')
+    def test_retrieve_country(self):
+        country = Country.objects.create(title='Country 1', flag='flag1.png', is_show=True)
+        response = self.client.get(self.country_detail_url(country.pk), format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['title'], 'Country 1')
 
-    def test_city_serializer_create(self):
-        country = Country.objects.create(title="New Country", flag="new_flag.png", is_show=True)
-        data = {'title': 'New City', 'is_show': True, 'country': country.id}
-        serializer = CitySerializer(data=data)
-        self.assertTrue(serializer.is_valid())
-        city = serializer.save()
-        self.assertEqual(city.title, 'New City')
-        self.assertEqual(city.is_show, True)
-        self.assertEqual(city.country, country)
+    def test_update_country(self):
+        country = Country.objects.create(title='Country 1', flag='flag1.png', is_show=True)
+        data = {'title': 'Updated Country', 'flag': 'updated_flag.png', 'is_show': False}
+        response = self.client.put(self.country_detail_url(country.pk), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['title'], 'Updated Country')
 
-    def test_country_serializer_create(self):
-        data = {'title': 'New Country', 'flag': 'new_flag.png', 'is_show': True}
-        serializer = CountrySerializer(data=data)
-        self.assertTrue(serializer.is_valid())
-        country = serializer.save()
-        self.assertEqual(country.title, 'New Country')
-        self.assertEqual(country.flag, 'new_flag.png')
-        self.assertEqual(country.is_show, True)
+    def test_partial_update_country(self):
+        country = Country.objects.create(title='Country 1', flag='flag1.png', is_show=True)
+        data = {'title': 'Partially Updated Country'}
+        response = self.client.patch(self.country_detail_url(country.pk), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['title'], 'Partially Updated Country')
+
+    def test_delete_country(self):
+        country = Country.objects.create(title='Country 1', flag='flag1.png', is_show=True)
+        response = self.client.delete(self.country_detail_url(country.pk), format='json')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Country.objects.count(), 0)
