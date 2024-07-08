@@ -36,10 +36,10 @@ class SendOTPSerializer(serializers.Serializer):
 
     def save(self, **kwargs):
         if self.validated_data.get('phone_number'):
-            SendOtp.send_otp_SMS(self.validated_data.get('phone_number'))
+            SendOtp.send_otp_SMS(self, self.validated_data.get('phone_number'))
 
         else:
-            SendOtp.send_otp_email(self.validated_data.get('email'))
+            SendOtp.send_otp_email(self, self.validated_data.get('email'))
         return self.validated_data
 
 class RegisterVerifySerializer(serializers.Serializer):
