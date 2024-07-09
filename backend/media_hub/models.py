@@ -6,7 +6,7 @@ User = get_user_model()
 
 
 class Image(TimeStamp, UUID):
-    image = models.ImageField(upload_to='images/',
+    image = models.ImageField(upload_to='media_hub/images/',
                               verbose_name=_('Image'), help_text='Upload image with specific pixels')
     def __str__(self):
         return str(self.id)

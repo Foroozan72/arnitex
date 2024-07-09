@@ -48,7 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Profile(TimeStamp, UUID):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', verbose_name=_('User'))
-    image = models.ImageField(default='profile/image/default.jpg', upload_to='profile/image', null=True, blank=True, verbose_name=_('Image'))
+    image = models.ImageField(default='profile/images/default.jpg', upload_to='profile/images', null=True, blank=True, verbose_name=_('Image'))
     first_name = models.CharField(max_length=50, null=True, blank=True, verbose_name=_('First_name'))
     last_name = models.CharField(max_length=50, null=True, blank=True, verbose_name=_('Last_name'))
     date_of_birth = models.DateField(null=True, blank=True, verbose_name=_('Date_of_birth'))
