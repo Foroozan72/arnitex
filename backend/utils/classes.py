@@ -1,5 +1,7 @@
+import os
 import requests
 from datetime import datetime
+from coinmarketcapapi import CoinMarketCapAPI
 from support.models import Ticket
 
 class GenerateTrackingCode():
@@ -33,3 +35,14 @@ def get_tether_price():
 
 
 
+def crypto_currency_inf(id):
+    CoinMarketCap_API_KEY = os.environ.get("CoinMarketCap_API_KEY")
+    cmc = CoinMarketCapAPI(CoinMarketCap_API_KEY)
+
+    
+    response = cmc.cryptocurrency_quotes_latest(
+        id=id,
+        convert='USD'
+    )
+    data = response.data
+    return data

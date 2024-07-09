@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from django.shortcuts import render
 from django.utils.translation import gettext as _
 
-from basic_info.models import CryptoCurrency
+from .models import CryptoCurrency
 from utils.response import APIResponseMixin
 from . import serializers
 

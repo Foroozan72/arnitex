@@ -1,0 +1,30 @@
+{
+    "bank_information": [
+        {"card_number": "۶۰۳۷۹۹", "bank_name": "بانک ملی"}, 
+        {"card_number": "۵۸۹۲۱۰ ", "bank_name": "بانک سپه"}, 
+        {"card_number": "۶۲۷۶۴۸", "bank_name": "بانک توسعه صادرات"}, 
+        {"card_number": "۶۲۷۹۶۱", "bank_name": "بانک صنعت و معدن"}, 
+        {"card_number": "۶۰۳۷۷۰", "bank_name": "بانک کشاورزی"}, 
+        {"card_number": "۶۲۸۰۲۳", "bank_name": "بانک مسکن"}, 
+        {"card_number": "۶۲۷۷۶۰", "bank_name": "پست بانک"}, 
+        {"card_number": "۵۰۲۹۰۸", "bank_name": "بانک توسعه تعاون"}, 
+        {"card_number": "۶۲۷۴۱۲", "bank_name": "بانک اقتصاد نوین"}, 
+        {"card_number": "۶۲۲۱۰۶", "bank_name": "بانک پارسیان"}, 
+        {"card_number": "۵۰۲۲۲۹", "bank_name": "بانک پاسارگاد"}, 
+        {"card_number": "۶۳۹۵۹۹", "bank_name": "بانک قوامین"}, 
+        {"card_number": "۶۲۷۴۸۸", "bank_name": "بانک کارآفرین"}, 
+        {"card_number": "۶۲۱۹۸۶", "bank_name": "بانک سامان"}, 
+        {"card_number": "۶۳۹۳۴۶", "bank_name": "بانک سینا"}, 
+        {"card_number": "۶۳۹۶۰۷", "bank_name": "بانک سرمایه"}, 
+        {"card_number": "۵۰۴۷۰۶", "bank_name": "بانک شهر"}, 
+        {"card_number": "۵۰۲۹۳۸", "bank_name": "بانک دی"}, 
+        {"card_number": "۶۰۳۷۶۹", "bank_name": "بانک صادرات"}, 
+        {"card_number": "۶۱۰۴۳۳", "bank_name": "بانک ملت"}, 
+        {"card_number": "۶۲۷۳۵۳", "bank_name": "بانک تجارت"}, 
+        {"card_number": "۵۸۹۴۶۳", "bank_name": "بانک رفاه"}, 
+        {"card_number": "۵۰۷۶۷۷", "bank_name": "موسسه نور"}, 
+        {"card_number": "۶۰۶۲۵۶", "bank_name": "موسسه ملل"}, 
+        {"card_number": "۶۰۶۳۷۳", "bank_name": "بانک قرض الحسنه مهر ایرانیان"}, 
+        {"card_number": "۵۰۵۴۱۶", "bank_name": "بانک گردشگری"}
+    ]
+}

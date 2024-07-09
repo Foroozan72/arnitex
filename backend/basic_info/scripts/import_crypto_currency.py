@@ -1,5 +1,5 @@
 import requests
-from basic_info.models import CryptoCurrency
+from crypto_currency.models import CryptoCurrency
 import os
 
 CryptoCurrency.objects.all().delete()

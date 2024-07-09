@@ -72,7 +72,7 @@ from io import BytesIO
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from coinmarketcapapi import CoinMarketCapAPI
-from basic_info.models import CryptoCurrency
+from .models import CryptoCurrency
 from PIL import Image
 import base64
 import datetime
@@ -167,7 +167,7 @@ from io import BytesIO
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from coinmarketcapapi import CoinMarketCapAPI
-from basic_info.models import CryptoCurrency
+from .models import CryptoCurrency
 from PIL import Image
 import base64
 import datetime
@@ -192,6 +192,14 @@ class CryptoTableConsumer(AsyncWebsocketConsumer):
         while True:
             try:
                 ids = ','.join(self.coin_ids)
+                print('ids', ids)
+                print('ids', ids)
+                print('ids', ids)
+                print('ids', ids)
+                print('ids', ids)
+                print('ids', ids)
+                print('ids', ids)
+                print('ids', ids)
                 
                 response = await sync_to_async(self.cmc.cryptocurrency_quotes_latest)(
                     id=ids,

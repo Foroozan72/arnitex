@@ -1,48 +1,32 @@
-from django.db import models
-from utils.models import TimeStamp, UUID
-from django.utils.translation import gettext_lazy as _
-from utils.enums import TransactionActionChoices
 import random
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
-class Wallet(TimeStamp, UUID):
-    wallet_id = models.CharField(max_length=100, verbose_name=_('Wallet id'), unique=True, blank=True)
-    user = models.OneToOneField('accounts.User', on_delete=models.CASCADE, verbose_name=_('User'))
-    balance = models.DecimalField(max_digits=20, decimal_places=8, default=0.0, verbose_name=_('Balance'))
+from crypto_currency.models import CryptoCurrency
+from utils.enums import TransactionActionChoices
+from utils.models import TimeStamp, UUID
 
-    def save(self, *args, **kwargs):
-        if not self.wallet_id:
-            self.wallet_id = self.generate_unique_wallet_id()
-        super().save(*args, **kwargs)
-
-    @staticmethod
-    def generate_wallet_id():
-        return ''.join(random.choices('0123456789', k=15))
-
-    def generate_unique_wallet_id(self):
-        wallet_id = self.generate_wallet_id()
-        while Wallet.objects.filter(wallet_id=wallet_id).exists():
-            wallet_id = self.generate_wallet_id()
-        return wallet_id
+class Asset(TimeStamp, UUID):
+    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='user_asset', verbose_name=_('User'))
+    coin = models.ForeignKey(CryptoCurrency, on_delete=models.CASCADE, verbose_name=_('Coin'))
+    amount = models.DecimalField(max_digits=20, decimal_places=8, default=0.0, verbose_name=_('Amount'))
 
     class Meta:
-        verbose_name = _('Wallet')
-        verbose_name_plural = _('Wallets')
+        verbose_name, verbose_name_plural = _('Asset'), _('Assets')
 
     def __str__(self):
-        return f'{self.user.phone_number} Wallet'
+        return f'{self.user.profile.first_name} {self.user.profile.last_name} - {self.coin} - {self.amount}'
 
-class Transaction(UUID):
-    user_wallet = models.ForeignKey(Wallet, on_delete=models.SET_NULL, null=True, verbose_name=_('User wallet'))
-    action = models.CharField(choices=TransactionActionChoices.choices, max_length=20, verbose_name=_('Action'))
-    amount = models.DecimalField(max_digits=20, decimal_places=8, verbose_name=_('Amount'))
-    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_('Timestamp'))
-
-    # internal transfer
-    sender = models.ForeignKey('accounts.User', on_delete=models.SET_NULL, null=True, related_name='sent_transactions', verbose_name=_('Sender'))
-    receiver = models.ForeignKey('accounts.User', on_delete=models.SET_NULL, null=True, related_name='received_transactions', verbose_name=_('Receiver'))
+class BankAccount(TimeStamp, UUID):
+    user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='bank_accounts_user', verbose_name=_('User'))
+    BIN = models.CharField(max_length=50, verbose_name=_(' Bank Identification Number'))
+    IBAN = models.CharField(max_length=50, verbose_name=_('International Bank Account Number'))
+    bank_name = models.CharField(max_length=50, verbose_name=_('Bank name'))
+    image = models.ImageField(default='bank/images/', verbose_name=_('Image'))
 
     class Meta:
-        verbose_name, verbose_name_plural = _('Transaction'), _('Transactions')
+        verbose_name, verbose_name_plural = _('Bank Account'), _('Bank Accounts')
 
     def __str__(self):
-        return f'{self.user_wallet.user.username} {self.action} of {self.amount}'
+        return f'{self.user.profile.first_name} {self.user.profile.last_name} - {self.bank_name}'
+

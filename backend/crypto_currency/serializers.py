@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from pycoingecko import CoinGeckoAPI
-from basic_info.models import CryptoCurrency
+from .models import CryptoCurrency
 from utils.response import CustomValidationError
 from django.utils.translation import gettext as _
 

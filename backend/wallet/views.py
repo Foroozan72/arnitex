@@ -1,133 +1,81 @@
-from rest_framework import viewsets, mixins , status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated , AllowAny
-from .models import Wallet ,Transaction
-from .serializers import WalletSerializer , TransferSerializer
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
-from rest_framework.views import APIView
-from rest_framework.decorators import action
-from django.db import transaction
-from django.utils import timezone
+from decimal import Decimal
+from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, DestroyModelMixin
+from rest_framework import viewsets, status, filters
+
+from django.contrib.auth import get_user_model
+from django.utils.translation import gettext as _
+from django.utils import translation
+
+from .models import Asset, BankAccount
+from . import serializers
+from utils.response import APIResponse, APIResponseMixin, CustomPagination
+from utils.classes import get_tether_price, crypto_currency_inf
+from crypto_currency.models import CryptoCurrency
+User = get_user_model()
 
 
-class CreateWalletViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
-    """
-    API endpoint to create a new Wallet object with a 15-digit wallet_id.
-    
-    Methods:
-    - create(request, *args, **kwargs): Handles POST requests to create a wallet.
-    
-    Inputs:
-    - request: The HTTP request containing user details in POST data.
-    
-    Outputs:
-    - response: JSON response containing wallet details or error details on failure.
-    
-    Permissions:
-    - IsAuthenticated: Requires user to be authenticated.
-    """
-    serializer_class = WalletSerializer
-    permission_classes = [IsAuthenticated]
+
+####  BANK ACCOUNTS  ####
+class AddBankAccount(APIResponseMixin, CreateModelMixin, viewsets.GenericViewSet):
+    serializer_class = serializers.AddBankAccountSerializer
 
     def create(self, request, *args, **kwargs):
-        user = request.user
-        wallet = Wallet(user=user)
-        wallet.save()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return self.api_response(msg=_('The bank account was created successfully.'), data=serializer.data)
 
-        serializer = self.get_serializer(wallet)
-        return Response(serializer.data)
+class BankAccountViewSet(APIResponseMixin, ListModelMixin, RetrieveModelMixin, DestroyModelMixin, viewsets.GenericViewSet):
+    serializer_class = serializers.BankAccountsSerializer
+    filter_backends = [filters.OrderingFilter, filters.SearchFilter]
+    pagination_class = CustomPagination
+    ordering_fields = ['-created_at']
+    search_fields = ['BIN', 'IBAN', 'bank_account']
 
+    def get_queryset(self):
+        return BankAccount.objects.filter(user=self.request.user)
 
-class WalletReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    Read-only API endpoint for viewing Wallet objects.
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return self.api_response(data=serializer.data)
 
-    Methods:
-    - list(request, *args, **kwargs): Retrieves a list of all wallets.
-    - retrieve(request, *args, **kwargs): Retrieves a wallet by its ID.
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return self.api_response(msg=_('The bank account was deleted.'))
 
-    Inputs:
-    - request: The HTTP request containing necessary data for the respective actions.
+####  ASSET  ####
+class TotalAsset(APIResponseMixin, ListModelMixin, viewsets.GenericViewSet):
+    def get_tether_price_toman(self, price):
+        str_price = str(price)
+        str_price = str_price[:-1]
 
-    Outputs:
-    - response: JSON response with the details of the wallet or a list of wallets.
-
-    Permissions:
-    - AllowAny: No authentication required.
-    """
-    permission_classes = [AllowAny]
-    queryset = Wallet.objects.all()
-    serializer_class = WalletSerializer
-    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    filterset_fields = ['user']
-    ordering_fields = ['wallet_id', 'user', 'balance']
-    search_fields = ['wallet_id', 'user__username', 'balance']
-
-
-
-class TransactionReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    Read-only API endpoint for viewing Transaction objects.
+        return float(str_price)
     
-    Methods:
-    - list(request, *args, **kwargs): Retrieves a list of all transactions.
-    - retrieve(request, *args, **kwargs): Retrieves a transaction by its ID.
-    
-    Inputs:
-    - request: The HTTP request containing necessary data for the respective actions.
-    
-    Outputs:
-    - response: JSON response with the details of the transaction or a list of transactions.
-    
-    Permissions:
-    - AllowAny: No authentication required.
-    """
-    permission_classes = [AllowAny]
-    queryset = Transaction.objects.all()
-    serializer_class = TransferSerializer
-    # filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    # filterset_fields = ['user_wallet', 'action', 'timestamp']
-    ordering_fields = ['timestamp', 'amount']
-    search_fields = ['user_wallet__wallet_id', 'action']
+    def get_tether(self):
+        tether_id = '825'
+        inf_coin = crypto_currency_inf(tether_id)
+        tether_price = inf_coin[tether_id]['quote']['USD']['price']
+        return float(f"{tether_price:.3f}")
 
+    def list(self, request, *args, **kwargs):
+        tether_price = get_tether_price()
+        tether_price_rial = (tether_price['buy'] + tether_price['sell']) / 2
+        tether_price_toman = self.get_tether_price_toman(int(tether_price_rial))
 
-class CheckWalletView(APIView):
-    """
-    View to check if a wallet ID exists.
-    """
-    def get(self, request, wallet_id):
-        if Wallet.objects.filter(wallet_id=wallet_id).exists():
-            return Response({'wallet_id': wallet_id}, status=status.HTTP_200_OK)
-        else:
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        
+        assets_user = Asset.objects.filter(user=request.user)
+        asset_toman = 0
+        asset_tether = 0
 
-class WalletViewSetTransfer(viewsets.ModelViewSet):
-    """
-    A viewset that provides the standard actions for the Wallet model and
-    includes a custom action to transfer balance between wallets.
+        for i in assets_user:
+            if i.coin.coin_name == 'Toman':
+                asset_toman += float(i.amount)
+                asset_tether += float(i.amount) / tether_price_toman
+            else:
+                inf_coin = crypto_currency_inf(i.coin.coin_id)
+                asset_toman += (float(i.amount) * inf_coin[i.coin.coin_id]['quote']['USD']['price']) * tether_price_toman
+                print(float(i.amount) * inf_coin[i.coin.coin_id]['quote']['USD']['price'])
+                asset_tether += (float(i.amount) * inf_coin[i.coin.coin_id]['quote']['USD']['price']) / self.get_tether()
 
-    Permissions:
-        - Requires the user to be authenticated to perform any actions.
-
-    Actions:
-        - list: Retrieve a list of all wallets.
-        - create: Create a new wallet.
-        - retrieve: Retrieve a specific wallet by ID.
-        - update: Update a specific wallet.
-        - partial_update: Partially update a specific wallet.
-        - destroy: Delete a specific wallet.
-        - transfer_balance: Transfer balance from one wallet to another.
-    """
-    queryset = Wallet.objects.all()
-    serializer_class = TransferSerializer
-    permission_classes = [IsAuthenticated]
-
-    # @action(detail=False, methods=['post'], url_path='transfer')
-    # def transfer_balance(self, request):
-    #     serializer = TransferSerializer(data=request.data, context={'request': request})
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-
-    #     return Response({'detail': 'Transfer successful'}, status=status.HTTP_200_OK)
+        return self.api_response(data={"asset_toman": asset_toman, "asset_tether": asset_tether})

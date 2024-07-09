@@ -3,7 +3,6 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from utils.models import TimeStamp, UUID
 from django.utils.translation import gettext_lazy as _
-from wallet.models import Wallet
 
 class UserManager(BaseUserManager):
     def create_user(self, email=None, phone_number=None, password=None):
@@ -14,8 +13,6 @@ class UserManager(BaseUserManager):
 
         user.set_password(password)
         user.save(using=self._db)
-        Profile.objects.create(user=user)
-        Wallet.objects.create(user=user)
         return user
 
     def create_superuser(self, email=None, phone_number=None, password=None):
@@ -58,3 +55,10 @@ class Profile(TimeStamp, UUID):
     country = models.CharField(max_length=50, null=True, blank=True, verbose_name=_('Country'))
     postal_code = models.CharField(max_length=20, null=True, blank=True, verbose_name=_('Postal_code'))
     national_id = models.CharField(max_length=50, null=True, blank=True, verbose_name=_('National_id'))
+
+    class Meta():
+        verbose_name = _('Profile')
+        verbose_name_plural = _('Profiles')
+
+    def __str__(self):
+        return f"{self.user.email} - {self.user.phone_number}"
