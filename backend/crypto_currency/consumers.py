@@ -192,14 +192,6 @@ class CryptoTableConsumer(AsyncWebsocketConsumer):
         while True:
             try:
                 ids = ','.join(self.coin_ids)
-                print('ids', ids)
-                print('ids', ids)
-                print('ids', ids)
-                print('ids', ids)
-                print('ids', ids)
-                print('ids', ids)
-                print('ids', ids)
-                print('ids', ids)
                 
                 response = await sync_to_async(self.cmc.cryptocurrency_quotes_latest)(
                     id=ids,
@@ -229,7 +221,7 @@ class CryptoTableConsumer(AsyncWebsocketConsumer):
 
                 await self.send(text_data=json.dumps(limited_coins))
                 print('--', datetime.now())
-                await asyncio.sleep(4)
+                await asyncio.sleep(10000000)
             except:
                 await self.send(text_data="dwadwadwa")
                 await asyncio.sleep(4)
