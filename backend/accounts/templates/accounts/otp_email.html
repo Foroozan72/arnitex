@@ -1,111 +1,114 @@
 <!DOCTYPE html>
 <html lang="fa">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>کد تایید</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f8f8f8;
-      }
-      .email-container {
-        width: 100%;
-        max-width: 600px;
-        margin: 0 auto;
-        background-color: #ffffff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-      .header {
-        background: rgb(57, 57, 57);
-        background: radial-gradient(
-          circle,
-          rgba(57, 57, 57, 1) 0%,
-          rgba(29, 27, 28, 1) 100%
-        );
-        padding: 20px;
-        text-align: right;
-        color: #ffffff;
-      }
-      .header img {
-        float: left;
-        height: 24px;
-      }
-      .header .title {
-        color: #f57636;
-        font-size: 18px;
-      }
-      a {
-        color: #e05f1e;
-      }
-      .content {
-        padding: 20px;
-      }
-      .footer {
-        background-color: #2f2f2f;
-        padding: 10px;
-        text-align: center;
-        color: #ffffff;
-        font-size: 12px;
-      }
-      .footer a {
-        color: #ffffff;
-        text-decoration: none;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="email-container">
-      <div class="header">
-        <img
-          width="160"
-          height="24"
-          src="./arnitex-logo.png"
-          alt="arnitex logo"
-        />
-        <div class="title">
-          صرافی آرنیتکس<br />بازار بین المللی خرید و فروش ارز دیجیتال
-        </div>
-      </div>
-      <div dir="rtl" class="content">
-        <p>سلام </p>
 
-        <p>
-          از اینکه
-          <a
-            href="https://arnitex.ir/"
-            target="_blank"
-            rel="noopener noreferrer"
-            >آرنیتکس</a
-          >
-          را انتخاب کرده‌اید سپاسگزاریم. برای تکمیل فرآیند تایید خود، لطفاً از
-          کد زیر استفاده کنید:
-        </p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>کد تایید</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f8f8;
+    }
 
-        <h2 style="text-align: center">{{ otp }}</h2>
+    .email-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-        <p>
-          برای امنیت شما، لطفاً این کد را با هیچ‌کس به اشتراک نگذارید. این کد تا
-          ۳ دقیقه معتبر است.
-        </p>
+    .header {
+      background: rgb(57, 57, 57);
+      background: radial-gradient(circle,
+          rgb(134, 134, 134) 0%,
+          rgba(29, 27, 28, 1) 100%);
+      padding: 20px;
+      text-align: right;
+      color: #ffffff;
+    }
 
-        <p>
-          اگر شما این کد را درخواست نکرده‌اید، لطفاً این ایمیل را نادیده بگیرید.
-        </p>
+    .im {
+      color: #000000;
+    }
 
-        <hr />
+    .header img {
+      float: left;
+      height: 24px;
+    }
 
-        <p>
-          توجه: این ایمیل از یک آدرس ایمیل بدون نظارت ارسال شده است. لطفاً
-          مستقیماً به این ایمیل پاسخ ندهید.
-        </p>
-      </div>
-      <div dir="rtl" class="footer">
-        <p>تمامی حقوق برای arnitex.ir محفوظ است - ۱۴۰۳ ©</p>
-        <p><a href="contact-us-link">تماس با ما</a></p>
+    .header .title {
+      color: #f57636;
+      font-size: 18px;
+    }
+
+    a {
+      color: #e05f1e;
+    }
+
+    .content {
+      padding: 20px;
+    }
+
+    .footer {
+      background-color: #2f2f2f;
+      padding: 10px;
+      text-align: center;
+      color: #ffffff;
+      font-size: 12px;
+    }
+
+    .footer a {
+      color: #ffffff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="email-container">
+    <div class="header">
+      <img width="160" height="24" src="https://arnitex.ir/media/images/arnitex-logo.png" alt="arnitex logo" />
+      <div class="title">
+        صرافی آرنیتکس<br />بازار بین المللی خرید و فروش ارز دیجیتال
       </div>
     </div>
-  </body>
+    <div dir="rtl" class="content">
+      <p>سلام </p>
+
+      <p>
+        از اینکه
+        <a href="https://arnitex.ir/" target="_blank" rel="noopener noreferrer">آرنیتکس</a>
+        را انتخاب کرده‌اید سپاسگزاریم. برای تکمیل فرآیند تایید خود، لطفاً از
+        کد زیر استفاده کنید:
+      </p>
+
+      <h2 style="text-align: center">{{ otp }}</h2>
+
+      <p>
+        برای امنیت شما، لطفاً این کد را با هیچ‌کس به اشتراک نگذارید. این کد تا
+        ۳ دقیقه معتبر است.
+      </p>
+
+      <p>
+        اگر شما این کد را درخواست نکرده‌اید، لطفاً این ایمیل را نادیده بگیرید.
+      </p>
+
+      <hr />
+
+      <p>
+        توجه: این ایمیل از یک آدرس ایمیل بدون نظارت ارسال شده است. لطفاً
+        مستقیماً به این ایمیل پاسخ ندهید.
+      </p>
+    </div>
+    <div dir="rtl" class="footer">
+      <p>تمامی حقوق برای arnitex.ir محفوظ است - ۱۴۰۳ ©</p>
+      <p><a href="contact-us-link">تماس با ما</a></p>
+    </div>
+  </div>
+</body>
+
 </html>

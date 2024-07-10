@@ -6,10 +6,6 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
-
-
-
-
 def get_user_otp(phone_number=None, email=None):
 	if phone_number != None:
 		stored_otp = cache.get(phone_number)

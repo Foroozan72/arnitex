@@ -27,7 +27,7 @@ class ReCaptchaV3Serializer(serializers.Serializer):
             raise serializers.ValidationError('Invalid reCAPTCHA. Please try again.')
         return value
 
-class SendOTPSerializer(serializers.Serializer): #ReCaptchaV3Serializer
+class SendOTPSerializer(ReCaptchaV3Serializer): #ReCaptchaV3Serializer
 
     email = serializers.EmailField(required=False)
     phone_number = serializers.CharField(max_length=11, required=False)
@@ -56,7 +56,7 @@ class SendOTPSerializer(serializers.Serializer): #ReCaptchaV3Serializer
             SendOtp.send_otp_email(self.validated_data.get('email'))
         return self.validated_data
 
-class RegisterVerifySerializer(ReCaptchaV3Serializer):
+class RegisterVerifySerializer(serializers.Serializer):
     email = serializers.EmailField(required=False)
     phone_number = serializers.CharField(max_length=11, required=False)
     password1 = serializers.CharField(max_length=20)
