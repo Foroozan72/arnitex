@@ -49,7 +49,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 class CustomPagination(PageNumberPagination):
-    page_size = 10  # تعداد آیتم‌های نمایش داده شده در هر صفحه
+    page_size = 10 
 
     def get_paginated_response(self, data):
         return Response({

@@ -1,10 +1,12 @@
 import random
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
 
 from crypto_currency.models import CryptoCurrency
 from utils.enums import TransactionActionChoices
 from utils.models import TimeStamp, UUID
+User = get_user_model()
 
 class Asset(TimeStamp, UUID):
     user = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='user_asset', verbose_name=_('User'))
@@ -29,4 +31,4 @@ class BankAccount(TimeStamp, UUID):
 
     def __str__(self):
         return f'{self.user.profile.first_name} {self.user.profile.last_name} - {self.bank_name}'
-
+        
